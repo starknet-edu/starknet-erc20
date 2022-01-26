@@ -61,7 +61,7 @@ end
 
 @view
 func next_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (next_rank: felt):
-	let (next_rank) = next_rank_storage.read()
+    let (next_rank) = next_rank_storage.read()
     return (next_rank)
 end
 
@@ -79,16 +79,16 @@ end
 
 @view
 func assigned_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (rank: felt):
-	let (rank) = assigned_rank(player_address)
-	let (supply) = assigned_attributes_storage.read(0, rank)
-	return (supply)
+    let (rank) = assigned_rank(player_address)
+    let (supply) = assigned_attributes_storage.read(0, rank)
+    return (supply)
 end
 
 @view
 func assigned_ticker{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (rank: felt):
-	let (rank) = assigned_rank(player_address)
-	let (ticker) = assigned_attributes_storage.read(1, rank)
-	return (ticker)
+    let (rank) = assigned_rank(player_address)
+    let (ticker) = assigned_attributes_storage.read(1, rank)
+    return (ticker)
 end
 
 ######### Constructor
@@ -96,7 +96,7 @@ end
 #
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-	_tderc20_address : felt, 
+    _tderc20_address : felt, 
         _players_registry: felt, 
         _workshop_id: felt):
     ex_initializer(_tderc20_address, _players_registry, _workshop_id)
@@ -111,105 +111,104 @@ end
 
 @external
 func ex1_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-	# Allocating locals. Make your code easier to write and read by avoiding some revoked references
-	alloc_locals
+    # Allocating locals. Make your code easier to write and read by avoiding some revoked references
+    alloc_locals
 
-	# Reading caller address
-	let (sender_address) = get_caller_address()
+    # Reading caller address
+    let (sender_address) = get_caller_address()
 
-	assign_rank_to_player(sender_address)
+    assign_rank_to_player(sender_address)
 
-	# Checking if player has validated this exercise before
-	let (has_validated) = has_validated_exercise(sender_address, 1)
+    # Checking if player has validated this exercise before
+    let (has_validated) = has_validated_exercise(sender_address, 1)
 
-	# This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-	tempvar syscall_ptr = syscall_ptr
+    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+    tempvar syscall_ptr = syscall_ptr
     tempvar pedersen_ptr = pedersen_ptr
     tempvar range_check_ptr = range_check_ptr
 
-	if has_validated == 0:
-		# player has validated
-		validate_exercice(sender_address, 1)
-		# Sending points
-		#distribute_points(sender_address, 1)
-	end
-	return()
+    if has_validated == 0:
+        # player has validated
+        validate_exercice(sender_address, 1)
+        # Sending points
+        #distribute_points(sender_address, 1)
+    end
+    return()
 end
 
 @external
 func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-	alloc_locals
-	# Reading caller address
-	let (sender_address) = get_caller_address()
-	
-	# Retrieve expected characteristics
-	let (expected_supply) = assigned_supply(sender_address)
-	let (expected_ticker) = assigned_ticker(sender_address)
-	
-	# Retrieve exercise address
-	let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
+    alloc_locals
+    # Reading caller address
+    let (sender_address) = get_caller_address()
+    
+    # Retrieve expected characteristics
+    let (expected_supply) = assigned_supply(sender_address)
+    let (expected_ticker) = assigned_ticker(sender_address)
+    
+    # Retrieve exercise address
+    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
 
-	# Reading supply of submission address
-	let (read_supply) = IERC20.name(contract_address = submitted_exercise_address)
-	# Checking supply is correct
-	assert read_supply = expected_supply
+    # Reading supply of submission address
+    let (read_supply) = IERC20.name(contract_address = submitted_exercise_address)
+    # Checking supply is correct
+    assert read_supply = expected_supply
 
-	# Reading supply of submission address
-	let (ticker) = IERC20.symbol(contract_address = submitted_exercise_address)
-	# Checking ticker is correct
-	assert read_ticker = expected_ticker
-	
+    # Reading supply of submission address
+    let (ticker) = IERC20.symbol(contract_address = submitted_exercise_address)
+    # Checking ticker is correct
+    assert read_ticker = expected_ticker
+    
+    # Checking if player has validated this exercise before
+    let (has_validated) = has_validated_exercise(sender_address, 1)
 
-	# Checking if player has validated this exercise before
-	let (has_validated) = has_validated_exercise(sender_address, 1)
-
-	# This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-	tempvar syscall_ptr = syscall_ptr
+    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+    tempvar syscall_ptr = syscall_ptr
     tempvar pedersen_ptr = pedersen_ptr
     tempvar range_check_ptr = range_check_ptr
 
-	if has_validated == 0:
-		# player has validated
-		validate_exercice(sender_address, 1)
-		# Sending points
-		#distribute_points(sender_address, 2)
-	end
-	return()
+    if has_validated == 0:
+        # player has validated
+        validate_exercice(sender_address, 1)
+        # Sending points
+        #distribute_points(sender_address, 2)
+    end
+    return()
 
 end
 
 @external
 func submit_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(erc20_address: felt):
-	# Reading caller address
-	let (sender_address) = get_caller_address()
-	# Checking this contract was not used by another group before
-	let (has_solution_been_submitted_before) = has_been_paired.read(erc20_address)
-	assert has_solution_been_submitted_before = 0
+    # Reading caller address
+    let (sender_address) = get_caller_address()
+    # Checking this contract was not used by another group before
+    let (has_solution_been_submitted_before) = has_been_paired.read(erc20_address)
+    assert has_solution_been_submitted_before = 0
 
-	# Assigning passed ERC20 as player ERC20
-	player_exercise_solution_storage.write(sender_address, erc20_address)
-	has_been_paired.write(erc20_address, 1)
+    # Assigning passed ERC20 as player ERC20
+    player_exercise_solution_storage.write(sender_address, erc20_address)
+    has_been_paired.write(erc20_address, 1)
 
-	# Checking if player has validated this exercise before
-	let (has_validated) = has_validated_exercise(sender_address, 0)
-	# This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+    # Checking if player has validated this exercise before
+    let (has_validated) = has_validated_exercise(sender_address, 0)
+    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
 
-	tempvar syscall_ptr = syscall_ptr
+    tempvar syscall_ptr = syscall_ptr
     tempvar pedersen_ptr = pedersen_ptr
     tempvar range_check_ptr = range_check_ptr
 
-	if has_validated == 0:
-		# player has validated
-		validate_exercise(sender_address, 0)
-		# Sending points
-		# setup points
-		#distribute_points(sender_address, 2)
-		# Deploying contract points
-		#distribute_points(sender_address, 2)
+    if has_validated == 0:
+        # player has validated
+        validate_exercise(sender_address, 0)
+        # Sending points
+        # setup points
+        #distribute_points(sender_address, 2)
+        # Deploying contract points
+        #distribute_points(sender_address, 2)
 
-	end
+    end
 
-	return()
+    return()
 end
 
 #
@@ -217,23 +216,23 @@ end
 #
 
 func assign_rank_to_player{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(sender_address:felt):
-	alloc_locals
+    alloc_locals
 
-	# Reading next available slot
-	let (next_rank) = next_rank_storage.read()
-	# Assigning to user
-	assigned_rank_storage.write(sender_address, next_rank)
+    # Reading next available slot
+    let (next_rank) = next_rank_storage.read()
+    # Assigning to user
+    assigned_rank_storage.write(sender_address, next_rank)
 
-	let new_next_rank = next_rank + 1
-	let (max_rank) = max_rank_storage.read()
+    let new_next_rank = next_rank + 1
+    let (max_rank) = max_rank_storage.read()
 
-	# Checking if we reach max_rank
-	if new_next_rank == max_rank:
-		next_rank_storage.write(0)
-	else:
-		next_rank_storage.write(new_next_rank)
-	end
-	return()
+    # Checking if we reach max_rank
+    if new_next_rank == max_rank:
+        next_rank_storage.write(0)
+    else:
+        next_rank_storage.write(new_next_rank)
+    end
+    return()
 end
 
 #
@@ -243,8 +242,8 @@ end
 
 @external
 func set_random_values{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(values_len: felt, values: felt*, column: felt):
-	only_teacher()
-	# Check that we fill max_ranK_storage cells
+    only_teacher()
+    # Check that we fill max_ranK_storage cells
     let (max_rank) = max_rank_storage.read()
     assert values_len = max_rank
     # Storing passed values in the store
