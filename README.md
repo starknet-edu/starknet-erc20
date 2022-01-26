@@ -17,7 +17,7 @@ Interested in helping writing those? [Reach out](https://twitter.com/HenriLieuta
 
 ### Disclaimer
 ​
-Don't expect any kind of benefit from using this, other than learning a bunch of cool stuff about StarkNet, the first general purpose validity rollup on the Ethereum Mainnnet.
+Don't expect any kind of benefit from using this, other than learning a bunch of cool stuff about StarkNet, the first general purpose validity rollup on the Ethereum Mainnet.
 ​
 StarkNet is still in Alpha. This means that development is ongoing, and the paint is not dry everywhere. Things will get better, and in the meanwhile, we make things work with a bit of duct tape here and there!
 ​
@@ -35,17 +35,18 @@ Do you have a question? Join our [Discord server](https://discord.gg/YHz7drT3), 
 Will update, simple copy from ERC721 should work
 
 ## Points list
-Today you will deploy yur own ERC20 token on StarkNet!
+Today you will deploy your own ERC20 token on StarkNet!
+
 ### Setting up
 - Create a git repository and share it with the teacher
-- Set up your environement (2 pts). 
+- Set up your environment (2 pts). 
 These points will be attributed manually if you do not manage to have your contract interact with the evaluator, or automatically in the first question.
 
 ### ERC20 basics
-- Call  `ex1_getTickerAndSupply()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in `Evaluator.sol` by calling getters `readTicker()` and `readSupply()`
+- Call `ex1_getTickerAndSupply()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in `Evaluator.cairo` by calling getters `readTicker()` and `readSupply()`
 - Create an ERC20 token contract with the proper ticker and supply (2 pt)
-- Deploy it to the Rinkeby testnet (1 pts)
-- Call `submitExercice()` in the Evaluator to configure the contract you want evaluated (Previous 5 points are attributed at that step)
+- Deploy it to the Goerli-alpha testnet (1 pts)
+- Call `submitExercise()` in the Evaluator to configure the contract you want evaluated (Previous 5 points are attributed at that step)
 - Call `ex2_testErc20TickerAndSupply()` in the evaluator to receive your points (2 pts) 
 
 ### Distributing and selling tokens
@@ -66,29 +67,29 @@ These points will be attributed manually if you do not manage to have your contr
 - Add the evaluator in the second tier. He should now be able to get 2N tokens
 - Call `ex9_testTier2Listing()` in the evaluator to show he can now get more tokens(2 pt)
 
-### Manipulating ERC20 tokens froml within contracts
+### Manipulating ERC20 tokens from within contracts
 - Manually claim tokens on the predeployed claimable ERC20 (CTK tokens) (1 pts)
 - Claim your points by calling `ex1_claimedPoints()` in the evaluator (1 pts)
 
 ### Calling another contract from your contract
-- Create a contract `ExerciceSolution` that can claim CTK tokens. Keep track of addresses who claimed tokens through `ExerciceSolution` , and how much. This amount should be visible by calling `tokensInCustody` on `ExerciceSolution` 
-- Deploy ExerciceSolution and submit it to the evaluator with  `submitExercice()` (1 pts)
+- Create a contract `ExerciseSolution` that can claim CTK tokens. Keep track of addresses who claimed tokens through `ExerciseSolution` , and how much. This amount should be visible by calling `tokensInCustody` on `ExerciseSolution` 
+- Deploy ExerciseSolution and submit it to the evaluator with `submitExercise()` (1 pts)
 - Call `ex2_claimedFromContract` in the evaluator to prove your code work (2 pts)
-- Create a function `withdrawTokens()` in ExerciceSolution to withdraw the claimableTokens from the ExerciceSolution to the address that initially claimed them 
+- Create a function `withdrawTokens()` in ExerciseSolution to withdraw the claimableTokens from the ExerciseSolution to the address that initially claimed them 
 - Call `ex3_withdrawFromContract` in the evaluator to prove your code work (2 pts)
 
 ### Approve and transferFrom
-- Use ERC20 function to allow your contract to manipulate your CTKs. Call `ex4_approvedExerciceSolution()` to claim points (1 pts) 
-- Use ERC20 to revoke this authorization. Call `ex5_revokedExerciceSolution()` to claim points (1 pts)
-- Create a function `depositTokens()` through which a user can deposit CTKs in ExerciceSolution, using transferFrom 
+- Use ERC20 function to allow your contract to manipulate your CTKs. Call `ex4_approvedExerciseSolution()` to claim points (1 pts) 
+- Use ERC20 to revoke this authorization. Call `ex5_revokedExerciseSolution()` to claim points (1 pts)
+- Create a function `depositTokens()` through which a user can deposit CTKs in ExerciseSolution, using transferFrom 
 - Call `ex6_depositTokens` in the evaluator to prove your code work (2 pts)
 
 ### Tracking user deposits with a deposit wrapper ERC20
-- Create and deploy a new ERC20 `ExerciceSolutionToken` to track user deposit. This ERC20 should be mintable and mint autorization given to ExerciceSolution. 
+- Create and deploy a new ERC20 `ExerciseSolutionToken` to track user deposit. This ERC20 should be mintable and mint authorization given to ExerciseSolution. 
 - Call `ex7_createERC20` in the evaluator to prove your code work (2 pts)
-- Update the deposit function on `ExerciceSolution`  so that user balances are tokenized. When a deposit is made in `ExerciceSolution` , tokens are minted in `ExerciceSolutionToken` and transfered to the address depositing. 
+- Update the deposit function on `ExerciseSolution` so that user balances are tokenized. When a deposit is made in `ExerciseSolution` , tokens are minted in `ExerciseSolutionToken` and transferred to the address depositing. 
 - Call `ex8_depositAndMint` in the evaluator to prove your code work (2 pts)
-- Update the `ExerciceSolution`  withdraw function so that it uses transferFrom() in `ExerciceSolutionToken`, burns these tokens, and returns the CTKs 
+- Update the `ExerciseSolution` withdraw function so that it uses transferFrom() in `ExerciseSolutionToken`, burns these tokens, and returns the CTKs 
 - Call `ex9_withdrawAndBurn` in the evaluator to prove your code work (2 pts)
 
 ## Exercises & Contract addresses 

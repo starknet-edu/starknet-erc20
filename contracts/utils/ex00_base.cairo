@@ -50,13 +50,13 @@ func players_registry{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_ch
 end
 
 @view
-func has_validated_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id: felt) -> (has_validated_exercice: felt):
+func has_validated_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id: felt) -> (has_validated_exercise: felt):
     # reading player registry
-        let (_players_registry) = players_registry_storage.read()
-        let (_workshop_id) = workshop_id_storage.read()
-        # Checking if the user already validated this exercice
-        let (has_current_user_validated_exercice) = Iplayers_registry.has_validated_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
-    return (has_current_user_validated_exercice)
+    let (_players_registry) = players_registry_storage.read()
+    let (_workshop_id) = workshop_id_storage.read()
+    # Checking if the user already validated this exercise  # todo: depending on choice for player_registry
+    let (has_current_user_validated_exercise) = Iplayers_registry.has_validated_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
+    return (has_current_user_validated_exercise)
 end
 
 #
@@ -97,17 +97,16 @@ func distribute_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
 	return()
 end
 
-func validate_exercice{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id):
+func validate_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id):
         # reading player registry
         let (_players_registry) = players_registry_storage.read()
         let (_workshop_id) = workshop_id_storage.read()
-        # Checking if the user already validated this exercice
-        let (has_current_user_validated_exercice) = Iplayers_registry.has_validated_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
-        assert (has_current_user_validated_exercice) = 0
+        # Checking if the user already validated this exercise  # todo: depending on choice for player_registry
+        let (has_current_user_validated_exercise) = Iplayers_registry.has_validated_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
+        assert (has_current_user_validated_exercise) = 0
 
-        # Marking the exercice as completed
-        Iplayers_registry.validate_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
-        
+        # Marking the exercise as completed
+        Iplayers_registry.validate_exercise(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
 
         return()
 end

@@ -1,4 +1,4 @@
-######### ERC 721 evaluator
+######### ERC-20 evaluator
 # Soundtrack https://www.youtube.com/watch?v=iuWa5wh8lG0
 
 %lang starknet
@@ -12,10 +12,10 @@ from contracts.utils.ex00_base import (
     distribute_points,
     ex_initializer,
     has_validated_exercise,
-    validate_exercice,
+    validate_exercise,
     only_teacher
 )
-from contracts.IExerciceSolution import IExerciceSolution
+from contracts.IExerciseSolution import IExerciseSolution
 from starkware.starknet.common.syscalls import (get_contract_address, get_caller_address)
 from starkware.cairo.common.uint256 import (
     Uint256, uint256_add, uint256_sub, uint256_le, uint256_lt, uint256_check, uint256_eq
@@ -77,6 +77,20 @@ func assigned_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check
     return (rank)
 end
 
+@view
+func assigned_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (rank: felt):
+	let (rank) = assigned_rank(player_address)
+	let (supply) = assigned_attributes_storage.read(0, rank)
+	return (supply)
+end
+
+@view
+func assigned_ticker{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (rank: felt):
+	let (rank) = assigned_rank(player_address)
+	let (ticker) = assigned_attributes_storage.read(1, rank)
+	return (ticker)
+end
+
 ######### Constructor
 # This function is called when the contract is deployed
 #
@@ -96,22 +110,85 @@ end
 #
 
 @external
-func ex1_test_erc721{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-	
+func ex1_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+	# Allocating locals. Make your code easier to write and read by avoiding some revoked references
+	alloc_locals
+
+	# Reading caller address
+	let (sender_address) = get_caller_address()
+
+	assign_rank_to_player(sender_address)
+
+	# Checking if player has validated this exercise before
+	let (has_validated) = has_validated_exercise(sender_address, 1)
+
+	# This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+	tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+	if has_validated == 0:
+		# player has validated
+		validate_exercice(sender_address, 1)
+		# Sending points
+		#distribute_points(sender_address, 1)
+	end
 	return()
 end
 
 @external
-func submit_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(erc721_address: felt):
+func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+	alloc_locals
+	# Reading caller address
+	let (sender_address) = get_caller_address()
+	
+	# Retrieve expected characteristics
+	let (expected_supply) = assigned_supply(sender_address)
+	let (expected_ticker) = assigned_ticker(sender_address)
+	
+	# Retrieve exercise address
+	let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
+
+	# Reading supply of submission address
+	let (read_supply) = IERC20.name(contract_address = submitted_exercise_address)
+	# Checking supply is correct
+	assert read_supply = expected_supply
+
+	# Reading supply of submission address
+	let (ticker) = IERC20.symbol(contract_address = submitted_exercise_address)
+	# Checking ticker is correct
+	assert read_ticker = expected_ticker
+	
+
+	# Checking if player has validated this exercise before
+	let (has_validated) = has_validated_exercise(sender_address, 1)
+
+	# This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+	tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+	if has_validated == 0:
+		# player has validated
+		validate_exercice(sender_address, 1)
+		# Sending points
+		#distribute_points(sender_address, 2)
+	end
+	return()
+
+end
+
+@external
+func submit_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(erc20_address: felt):
 	# Reading caller address
 	let (sender_address) = get_caller_address()
 	# Checking this contract was not used by another group before
-	let (has_solution_been_submitted_before) = has_been_paired.read(erc721_address)
+	let (has_solution_been_submitted_before) = has_been_paired.read(erc20_address)
 	assert has_solution_been_submitted_before = 0
 
-	# Assigning passed ERC721 as player ERC721
-	player_exercise_solution_storage.write(sender_address, erc721_address)
-	has_been_paired.write(erc721_address, 1)
+	# Assigning passed ERC20 as player ERC20
+	player_exercise_solution_storage.write(sender_address, erc20_address)
+	has_been_paired.write(erc20_address, 1)
 
 	# Checking if player has validated this exercise before
 	let (has_validated) = has_validated_exercise(sender_address, 0)
@@ -123,7 +200,7 @@ func submit_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 
 	if has_validated == 0:
 		# player has validated
-		validate_exercice(sender_address, 0)
+		validate_exercise(sender_address, 0)
 		# Sending points
 		# setup points
 		#distribute_points(sender_address, 2)
@@ -134,9 +211,11 @@ func submit_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 
 	return()
 end
+
 #
 # Internal functions
 #
+
 func assign_rank_to_player{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(sender_address:felt):
 	alloc_locals
 
@@ -159,7 +238,7 @@ end
 
 #
 # External functions - Administration
-# Only admins can call these. You don't need to understand them to finish the exercice.
+# Only admins can call these. You don't need to understand them to finish the exercise.
 #
 
 @external
@@ -175,7 +254,7 @@ end
 
 #
 # Internal functions - Administration
-# Only admins can call these. You don't need to understand them to finish the exercice.
+# Only admins can call these. You don't need to understand them to finish the exercise.
 #
 
 func set_a_random_value{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(values_len: felt, values: felt*, column: felt):
