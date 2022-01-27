@@ -129,7 +129,7 @@ func ex1_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 
     if has_validated == 0:
         # player has validated
-        validate_exercice(sender_address, 1)
+        validate_exercise(sender_address, 1)
         # Sending points
         #distribute_points(sender_address, 1)
     end
@@ -169,7 +169,7 @@ func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 
     if has_validated == 0:
         # player has validated
-        validate_exercice(sender_address, 1)
+        validate_exercise(sender_address, 1)
         # Sending points
         #distribute_points(sender_address, 2)
     end
