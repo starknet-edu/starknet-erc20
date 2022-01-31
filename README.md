@@ -58,18 +58,22 @@ The total amount of points to collect from completing all exercises up to this p
 The total amount of points to collect from completing all exercises up to this point is : 10 points
 
 ### Creating an ICO allow list
-- Create a customer allow listing function. Only allow listed users should be able to call `getToken()`
-- Call `ex5_testDenyListing()` in the evaluator to show he can't get tokens using `getToken()` (1 pt)
+- Create a customer allow listing function. Only allow listed users should be able to call `get_token()`
+- Call `ex5_test_deny_listing()` in the evaluator to show he can't get tokens using `get_token()` (1 pt)
 - Allow the evaluator to get tokens
-- Call `ex6_testAllowListing()`in the evaluator to show he can now get tokens `getToken()` (2 pt)
+- Call `ex6_test_allow_listing()`in the evaluator to show he can now get tokens `get_token()` (2 pt)
+
+The total amount of points to collect from completing all exercises up to this point is : 13 points
 
 ### Creating multi tier allow list
-- Create a customer multi tier listing function. Only allow listed users should be able to call `getToken()`; and customers should receive a different amount of token based on their level
-- Call `ex7_testDenyListing()` in the evaluator to show he can't get tokens using `getToken()` (1 pt)
+- Create a customer multi tier listing function. Only allow listed users should be able to call `get_token()`; and customers should receive a different amount of token based on their level
+- Call `ex7_test_deny_listing()` in the evaluator to show he can't get tokens using `get_token()` (1 pt)
 - Add the evaluator in the first tier. He should now be able to get N tokens 
-- Call `ex8_testTier1Listing()` in the evaluator to show he can now get tokens(2 pt)
+- Call `ex8_test_tier1_listing()` in the evaluator to show he can now get tokens(2 pt)
 - Add the evaluator in the second tier. He should now be able to get 2N tokens
-- Call `ex9_testTier2Listing()` in the evaluator to show he can now get more tokens(2 pt)
+- Call `ex9_test_tier2_listing()` in the evaluator to show he can now get more tokens(2 pt)
+
+The total amount of points to collect from completing all exercises up to this point is : 18 points
 
 ### Manipulating ERC20 tokens from within contracts
 - Manually claim tokens on the predeployed claimable ERC20 (CTK tokens) (1 pts)
