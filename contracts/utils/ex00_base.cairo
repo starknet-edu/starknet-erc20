@@ -31,7 +31,7 @@ end
 @storage_var
 func Teacher_accounts(account: felt) -> (balance: felt):
 end
-	
+
 #
 # Declaring getters
 # Public variables should be declared explicitely with a getter
@@ -50,13 +50,13 @@ func players_registry{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_ch
 end
 
 @view
-func has_validated_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id: felt) -> (has_validated_exercice: felt):
+func has_validated_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id: felt) -> (has_validated_exercise: felt):
     # reading player registry
-        let (_players_registry) = players_registry_storage.read()
-        let (_workshop_id) = workshop_id_storage.read()
-        # Checking if the user already validated this exercice
-        let (has_current_user_validated_exercice) = Iplayers_registry.has_validated_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
-    return (has_current_user_validated_exercice)
+    let (_players_registry) = players_registry_storage.read()
+    let (_workshop_id) = workshop_id_storage.read()
+    # Checking if the user already validated this exercise
+    let (has_current_user_validated_exercise) = Iplayers_registry.has_validated_exercise(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
+    return (has_current_user_validated_exercise)
 end
 
 #
@@ -86,30 +86,28 @@ end
 #
 
 func distribute_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(to: felt, amount: felt):
-	
-	# Converting felt to uint256. We assume it's a small number 
-	# We also add the required number of decimals
-	let points_to_credit: Uint256 = Uint256(amount*1000000000000000000, 0)
-	# Retrieving contract address from storage
-	let (contract_address) = tderc20_address_storage.read()
-	# Calling the ERC20 contract to distribute points
-	ITDERC20.distribute_points(contract_address=contract_address, to = to, amount = points_to_credit)
-	return()
+    # Converting felt to uint256. We assume it's a small number
+    # We also add the required number of decimals
+    let points_to_credit: Uint256 = Uint256(amount*1000000000000000000, 0)
+    # Retrieving contract address from storage
+    let (contract_address) = tderc20_address_storage.read()
+    # Calling the ERC20 contract to distribute points
+    ITDERC20.distribute_points(contract_address=contract_address, to = to, amount = points_to_credit)
+    return()
 end
 
-func validate_exercice{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id):
-        # reading player registry
-        let (_players_registry) = players_registry_storage.read()
-        let (_workshop_id) = workshop_id_storage.read()
-        # Checking if the user already validated this exercice
-        let (has_current_user_validated_exercice) = Iplayers_registry.has_validated_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
-        assert (has_current_user_validated_exercice) = 0
+func validate_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id):
+    # reading player registry
+    let (_players_registry) = players_registry_storage.read()
+    let (_workshop_id) = workshop_id_storage.read()
+    # Checking if the user already validated this exercise
+    let (has_current_user_validated_exercise) = Iplayers_registry.has_validated_exercise(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
+    assert (has_current_user_validated_exercise) = 0
 
-        # Marking the exercice as completed
-        Iplayers_registry.validate_exercice(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
-        
+    # Marking the exercise as completed
+    Iplayers_registry.validate_exercise(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
 
-        return()
+    return()
 end
 
 

@@ -6,7 +6,7 @@
 
 @contract_interface
 namespace Iplayers_registry:
-    func has_validated_exercice(account: felt, workshop: felt, exercise: felt) -> (has_validated_exercice: felt):
+    func has_validated_exercise(account: felt, workshop: felt, exercise: felt) -> (has_validated_exercise: felt):
     end
     func is_exercise_or_admin(account: felt) -> (permission: felt):
     end
@@ -20,7 +20,7 @@ namespace Iplayers_registry:
     end
     func set_exercises_or_admins(accounts_len: felt, accounts: felt*):
     end
-    func validate_exercice(account: felt, workshop: felt, exercise: felt):  
+    func validate_exercise(account: felt, workshop: felt, exercise: felt):  
     end
 end
 
