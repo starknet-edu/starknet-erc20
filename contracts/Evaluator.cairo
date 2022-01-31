@@ -5,7 +5,7 @@
 %builtins pedersen range_check
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import assert_not_zero
+from starkware.cairo.common.math import assert_lt, assert_not_zero
 
 from contracts.utils.ex00_base import (
     tderc20_address,
@@ -19,7 +19,7 @@ from contracts.utils.ex00_base import (
 from contracts.IExerciseSolution import IExerciseSolution
 from starkware.starknet.common.syscalls import (get_contract_address, get_caller_address)
 from starkware.cairo.common.uint256 import (
-    Uint256, uint256_add, uint256_sub, uint256_le, uint256_lt, uint256_check, uint256_eq
+    Uint256, uint256_add, uint256_sub, uint256_mul, uint256_le, uint256_lt, uint256_check, uint256_eq
 )
 from contracts.token.ERC20.ITDERC20 import ITDERC20
 from contracts.token.ERC20.IERC20 import IERC20
@@ -81,17 +81,18 @@ func assigned_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check
 end
 
 @view
-func assigned_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (supply: felt):
+func read_ticker{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (ticker: felt):
     let (rank) = assigned_rank(player_address)
-    let (supply) = random_attributes_storage.read(0, rank)
-    return (supply)
+    let (ticker) = random_attributes_storage.read(0, rank)
+    return (ticker)
 end
 
 @view
-func assigned_symbol{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (symbol: felt):
+func read_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address: felt) -> (supply: Uint256):
     let (rank) = assigned_rank(player_address)
-    let (symbol) = random_attributes_storage.read(1, rank)
-    return (symbol)
+    let (supply_felt) = random_attributes_storage.read(1, rank)
+    let supply: Uint256 = Uint256(supply_felt, 0)
+    return (supply)
 end
 
 ######### Constructor
@@ -99,9 +100,9 @@ end
 #
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        _tderc20_address : felt, 
+        _players_registry: felt,
+        _tderc20_address : felt,
         _dummy_token_address: felt, 
-        _players_registry: felt, 
         _workshop_id: felt,
         _first_teacher: felt):
     ex_initializer(_tderc20_address, _players_registry, _workshop_id)
@@ -118,7 +119,7 @@ end
 #
 
 @external
-func ex1_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func ex1a_assign_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     # Allocating locals. Make your code easier to write and read by avoiding some revoked references
     alloc_locals
 
@@ -146,52 +147,42 @@ end
 
 
 @external
-func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func ex1b_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     alloc_locals
     # Reading caller address
     let (sender_address) = get_caller_address()
     
     # Retrieve expected characteristics
-    let (expected_supply) = assigned_supply(sender_address)
-    let expected_supply_uint256: Uint256 = Uint256(expected_supply, 0)
-
-    let (expected_symbol) = assigned_symbol(sender_address)
+    let (expected_supply) = read_supply(sender_address)
+    let (expected_symbol) = read_ticker(sender_address)
 
     # Retrieve exercise address
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
 
     # Reading supply of submission address
-    let (read_supply) = IERC20.totalSupply(contract_address = submitted_exercise_address)
+    let (submission_supply) = IERC20.totalSupply(contract_address = submitted_exercise_address)
     # Checking supply is correct
-    assert read_supply = expected_supply_uint256
+    let (is_equal) = uint256_eq(submission_supply, expected_supply)
+    assert  is_equal = 1
 
     # Reading symbol of submission address
-    let (read_symbol) = IERC20.symbol(contract_address = submitted_exercise_address)
+    let (submission_symbol) = IERC20.symbol(contract_address = submitted_exercise_address)
     # Checking symbol is correct
-    assert read_symbol = expected_symbol
+    assert submission_symbol = expected_symbol
     
     # Checking some ERC20 functions were created
     let (contract_address) = get_contract_address()
 
-    # Instantiating a zero in uint format
-    let zero_as_uint256: Uint256 = Uint256(0,0)
-
-    let (initial_allowance) = IERC20.allowance(contract_address = submitted_exercise_address, owner = contract_address, spender = sender_address)
-    let (is_equal) = uint256_eq(initial_allowance, zero_as_uint256)
-    assert is_equal = 1
-
     let (balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = contract_address)
-    let (is_equal) = uint256_eq(balance, zero_as_uint256)
-    assert is_equal = 1
+    let (initial_allowance) = IERC20.allowance(contract_address=submitted_exercise_address, owner=contract_address, spender=sender_address)
 
     # 10 tokens
     let ten_tokens_as_uint256: Uint256 = Uint256(10 * 1000000000000000000, 0)
-
     IERC20.approve(contract_address = submitted_exercise_address, spender = sender_address, amount = ten_tokens_as_uint256)
 
     let (final_allowance) = IERC20.allowance(contract_address = submitted_exercise_address, owner = contract_address, spender = sender_address)
-    let (is_equal) = uint256_eq(final_allowance, ten_tokens_as_uint256)
-    assert is_equal = 1
+    let (difference) = uint256_sub(final_allowance, initial_allowance)
+    assert difference = ten_tokens_as_uint256
 
     # Checking if player has validated this exercise before
     let (has_validated) = has_validated_exercise(sender_address, 2)
@@ -212,22 +203,24 @@ end
 
 
 @external
-func ex3_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func ex3_test_get_token{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     alloc_locals
     # Reading addresses
     let (sender_address) = get_caller_address()
     let (evaluator_address) = get_contract_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
-    assert_not_zero(submitted_exercise_address)
 
     let (initial_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
-    let (got_token) = IExerciseSolution.getToken(contract_address = submitted_exercise_address)
-    assert got_token = 1
+    let (amount_received) = IExerciseSolution.get_token(contract_address = submitted_exercise_address)
+    # Checking returned value
+    let zero_as_uint256: Uint256 = Uint256(0, 0)
+    let (is_positive) = uint256_lt(zero_as_uint256, amount_received)
+    assert is_positive = 1
 
     let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
 
-    let (increased) = uint256_le(initial_balance, final_balance)
-    assert increased = 1
+    let (difference) = uint256_sub(initial_balance, final_balance)
+    let (amount_is_difference) = uint256_eq(amount_received, difference)
 
     # Checking if player has validated this exercise before
     let (has_validated) = has_validated_exercise(sender_address, 3)
@@ -247,32 +240,10 @@ func ex3_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 end
 
 
-# For ex4 you need DTK20 tokens. Go get them (and give me some?)
 @external
-func ex4_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-    alloc_locals
-    # Reading addresses
-    let (sender_address) = get_caller_address()
-    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
-    assert_not_zero(submitted_exercise_address)
-
-    let first_buy_amount: Uint256 = _test_buy_token(submitted_exercise_address)
-    
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 4)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 4)
-        # Sending points
-        distribute_points(sender_address, 2)
-    end
-    return()
+func ex4_test_buy_token{syscall_ptr : felt *, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    # We'll see about this one later
+    return ()
 end
 
 @external
@@ -298,8 +269,8 @@ func submit_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
     if has_validated == 0:
         # player has validated
         validate_exercise(sender_address, 0)
-        # Sending points
-        distribute_points(sender_address, 2)
+        # Sending Setup, contract & deployment points
+        distribute_points(sender_address, 5)
     end
     return()
 end
@@ -326,47 +297,6 @@ func assign_rank_to_player{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
         next_rank_storage.write(new_next_rank)
     end
     return()
-end
-
-
-func _test_buy_token{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(submitted_exercise_address : felt) -> (first_buy_amount : Uint256):
-    alloc_locals
-    # Reading addresses
-    let (evaluator_address) = get_contract_address()
-
-    let (initial_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
-    
-    let ten_tokens_as_uint256: Uint256 = Uint256(10 * 1000000000000000000, 0)
-    let (bought) = IExerciseSolution.buyToken(contract_address = submitted_exercise_address, value = ten_tokens_as_uint256)
-    assert bought = 1
-
-    let (intermediate_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
-    
-    # Save bought amount
-    let first_buy_amount : Uint256 = uint256_sub(intermediate_balance, initial_balance)
-    # Check that balance increased
-    let zero_as_uint256: Uint256 = Uint256(0, 0)
-    let (increased) = uint256_lt(zero_as_uint256, first_buy_amount)
-    assert increased = 1    
-
-    # Buy some more token
-    let thirty_tokens_as_uint256: Uint256 = Uint256(30 * 1000000000000000000, 0)
-    let (bought) = IExerciseSolution.buyToken(contract_address = submitted_exercise_address, value = thirty_tokens_as_uint256)
-    assert (bought) = 1
-
-    let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
-
-    # Save bought amount
-    let second_buy_amount : Uint256 = uint256_sub(final_balance, intermediate_balance)
-    # Check that balance increased again
-    let (increased) = uint256_lt(zero_as_uint256, second_buy_amount)
-    assert increased = 1    
-
-    # Check that we didn't get the same amount from both calls
-    let (difference) = uint256_lt(first_buy_amount, second_buy_amount)
-    assert difference = 1
-
-    return (first_buy_amount)
 end
 
 
