@@ -76,8 +76,10 @@ The total amount of points to collect from completing all exercises up to this p
 The total amount of points to collect from completing all exercises up to this point is : 18 points
 
 ### Manipulating ERC20 tokens from within contracts
-- Manually claim tokens on the predeployed claimable ERC20 (CTK tokens) (1 pts)
-- Claim your points by calling `ex1_claimedPoints()` in the evaluator (1 pts)
+- Manually claim tokens on the predeployed claimable ERC20 (DTK-20 tokens) (1 pts)
+- Claim your points by calling `ex10_claimed_tokens()` in the evaluator (1 pts)
+
+The total amount of points to collect from completing all exercises up to this point is : 20 points
 
 ### Calling another contract from your contract
 - Create a contract `ExerciseSolution` that can claim CTK tokens. Keep track of addresses who claimed tokens through `ExerciseSolution` , and how much. This amount should be visible by calling `tokensInCustody` on `ExerciseSolution` 

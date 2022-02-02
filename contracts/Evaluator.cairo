@@ -107,6 +107,12 @@ func read_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     return (supply)
 end
 
+@view
+func dummy_token_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (account: felt):
+    let (address) = dummy_token_address_storage.read()
+    return (address)
+end
+
 ######### Constructor
 # This function is called when the contract is deployed
 #
@@ -270,16 +276,17 @@ func ex5_test_deny_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 
     let (initial_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
     let (amount_received) = IExerciseSolution.get_token(contract_address = submitted_exercise_address)
-    # Checking returned value is 0
+    
+    # Checking that nothing happened
+    # Returned value is 0
     let zero_as_uint256: Uint256 = Uint256(0, 0)
     let (difference) = uint256_sub(zero_as_uint256, amount_received)
     assert difference = zero_as_uint256
-
-    # Checking that the balance didn't change
+    # And the balance didn't change
     let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
     let (amount_is_difference) = uint256_eq(initial_balance, final_balance)
 
-    # Saving contract that denied the token request
+    # Saving the address of the contract that denied the token request
     first_listing_storage.write(submitted_exercise_address, 1)
 
     # Checking if player has validated this exercise before
@@ -307,7 +314,8 @@ func ex6_test_allow_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (sender_address) = get_caller_address()
     let (evaluator_address) = get_contract_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
-    # Checking that ther player has validated the previous exercise with the same contract
+
+    # Checking that the player has validated the previous exercise with the same contract
     let (was_denied_before) = first_listing_storage.read(submitted_exercise_address)
     assert was_denied_before = 1
 
@@ -352,16 +360,17 @@ func ex7_test_deny_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 
     let (initial_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
     let (amount_received) = IExerciseSolution.get_token(contract_address = submitted_exercise_address)
-    # Checking returned value is 0
+
+    # Checking that nothing happened
+    # Returned value is 0
     let zero_as_uint256: Uint256 = Uint256(0, 0)
     let (difference) = uint256_sub(zero_as_uint256, amount_received)
     assert difference = zero_as_uint256
-
-    # Checking that the balance didn't change
+    # And the balance didn't change
     let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
     let (amount_is_difference) = uint256_eq(initial_balance, final_balance)
 
-    # Saving contract that denied this token request
+    # Saving the address of the contract that denied the token request
     first_listing_multi_storage.write(submitted_exercise_address, 1)
 
     # Checking if player has validated this exercise before
@@ -389,7 +398,8 @@ func ex8_test_tier1_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (sender_address) = get_caller_address()
     let (evaluator_address) = get_contract_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
-    # Checking that ther player has validated the previous exercise with the same contract
+
+    # Checking that the player has validated the previous exercise with the same contract
     let (was_denied_before) = first_listing_multi_storage.read(submitted_exercise_address)
     assert was_denied_before = 1
 
@@ -406,7 +416,7 @@ func ex8_test_tier1_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (difference) = uint256_sub(initial_balance, final_balance)
     let (amount_is_difference) = uint256_eq(amount_received, difference)
 
-    # Saving amount received from this address
+    # Saving amount received from this contract
     second_listing_multi_storage.write(submitted_exercise_address, amount_received)
 
     # Checking if player has validated this exercise before
@@ -435,7 +445,7 @@ func ex9_test_tier2_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (evaluator_address) = get_contract_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
 
-    # Checking that ther player has validated the previous exercise with the same contract
+    # Checking that the player has validated the previous exercise with the same contract
     let (first_ammount_received) = second_listing_multi_storage.read(submitted_exercise_address)
     let (initial_balance) = IERC20.balanceOf(contract_address=submitted_exercise_address, account=evaluator_address)
     let (second_amount_received) = IExerciseSolution.get_token(contract_address=submitted_exercise_address)
@@ -450,7 +460,7 @@ func ex9_test_tier2_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (difference) = uint256_sub(initial_balance, final_balance)
     let (amount_is_difference) = uint256_eq(second_amount_received, difference)
 
-    # Checking received amount is twice the first amount
+    # Checking that the received amount is twice the amount received in the previous exercise
     let two_as_uint256: Uint256 = Uint256(2, 0)
     let twice_first_amount: Uint256 = uint256_mul(first_ammount_received, two_as_uint256)
     let (is_equal) = uint256_eq(second_amount_received, twice_first_amount)
@@ -467,6 +477,37 @@ func ex9_test_tier2_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     if has_validated == 0:
         # player has validated
         validate_exercise(sender_address, 9)
+        # Sending points
+        distribute_points(sender_address, 2)
+    end
+    return()
+end
+
+
+func ex10_claimed_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    # Reading addresses
+    let (sender_address) = get_caller_address()
+    let (read_dummy_token_address) = dummy_token_address_storage.read()
+
+    let (dummy_token_balance) = IERC20.balanceOf(contract_address=read_dummy_token_address, account=sender_address)
+
+    # Checking that the dummy token balance is positive
+    let zero_as_uint256: Uint256 = Uint256(0, 0)
+    let (positive) = uint256_lt(zero_as_uint256, dummy_token_balance)
+    assert positive = 1
+
+    # Checking if player has validated this exercise before
+    let (has_validated) = has_validated_exercise(sender_address, 10)
+
+    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    if has_validated == 0:
+        # player has validated
+        validate_exercise(sender_address, 10)
         # Sending points
         distribute_points(sender_address, 2)
     end
