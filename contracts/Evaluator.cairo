@@ -406,13 +406,76 @@ func ex10_claimed_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 end
 
 
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 10)
-        # Sending points
-        distribute_points(sender_address, 2)
-    end
-    return()
+func ex11_claimed_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    # Reading addresses
+    let (sender_address) = get_caller_address()
+    let (contract_address) = get_contract_address()
+    let (read_dummy_token_address) = dummy_token_address_storage.read()
+    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
+
+    let (initial_dummy_token_custody) = IExerciseSolution.tokens_in_custody(
+        contract_address=submitted_exercise_address, account=contract_address)
+
+    # Claiming tokens for the evaluator
+    let (claimed_amount) = IExerciseSolution.get_tokens_from_contract(contract_address=submitted_exercise_address)
+
+    # Checking that the amount returned is positive
+    let zero_as_uint256: Uint256 = Uint256(0, 0)
+    let (is_positive) = uint256_lt(zero_as_uint256, claimed_amount)
+    assert is_positive = 1
+
+    # Checking that the amount in custody increased
+    let (final_dummy_token_custody) = IExerciseSolution.tokens_in_custody(
+        contract_address=submitted_exercise_address, account=contract_address)
+
+    let (custody_difference) = uint256_sub(final_dummy_token_custody, initial_dummy_token_custody)
+    let (has_increased) = uint256_lt(zero_as_uint256, custody_difference)
+    assert has_increased = 1
+
+    # And finally checking that the amount returned is the same as the increase
+    let (is_equal) = uint256_eq(custody_difference, claimed_amount)
+    assert is_equal = 1
+
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 11, 2)
+    return ()
+end
+
+
+func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    # Reading addresses
+    let (contract_address) = get_contract_address()
+    let (read_dummy_token_address) = dummy_token_address_storage.read()
+    let(sender_address) = get_caller_address()
+    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
+
+    let (initial_dummy_token_balance) = IERC20.balanceOf(
+        contract_address=read_dummy_token_address, account=contract_address)
+
+    # Withdrawing tokens claimed in previous exercise
+    let (withdrawn_amount) = IExerciseSolution.withdraw_tokens(contract_address=submitted_exercise_address)
+
+    # Checking that the amount returned is positive
+    let zero_as_uint256: Uint256 = Uint256(0, 0)
+    let (is_positive) = uint256_lt(zero_as_uint256, withdrawn_amount)
+    assert is_positive = 1
+
+    # Checking that the balance increased
+    let(final_dummy_token_balance) = IERC20.balanceOf(
+        contract_address=read_dummy_token_address, account=contract_address)
+    let (balance_difference) = uint256_sub(final_dummy_token_balance, initial_dummy_token_balance)
+    let (has_increased) = uint256_lt(zero_as_uint256, balance_difference)
+    assert has_increased = 1
+
+    # And finally checking that the amount returned is the same as the increase
+    let (is_equal) = uint256_eq(balance_difference, withdrawn_amount)
+    assert is_equal = 1
+
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 12, 3)
+    return ()
 end
 
 

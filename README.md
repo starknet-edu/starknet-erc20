@@ -82,11 +82,13 @@ The total amount of points to collect from completing all exercises up to this p
 The total amount of points to collect from completing all exercises up to this point is : 20 points
 
 ### Calling another contract from your contract
-- Create a contract `ExerciseSolution` that can claim CTK tokens. Keep track of addresses who claimed tokens through `ExerciseSolution` , and how much. This amount should be visible by calling `tokensInCustody` on `ExerciseSolution` 
-- Deploy ExerciseSolution and submit it to the evaluator with `submitExercise()` (1 pts)
-- Call `ex2_claimedFromContract` in the evaluator to prove your code work (2 pts)
-- Create a function `withdrawTokens()` in ExerciseSolution to withdraw the claimableTokens from the ExerciseSolution to the address that initially claimed them 
-- Call `ex3_withdrawFromContract` in the evaluator to prove your code work (2 pts)
+- Create a contract `ExerciseSolution` that can claim DTK-20 tokens. Keep track of addresses who claimed tokens through `ExerciseSolution` , and how much. This amount should be visible by calling `tokens_in_custody` on `ExerciseSolution` 
+- Deploy ExerciseSolution and submit it to the evaluator with `submit_exercise()`.
+- Call `ex11_claimed_from_contract()` in the evaluator to prove your code works (3 pts)
+- Create a function `withdraw_tokens()` in `ExerciseSolution` to withdraw the claimed tokens from the `ExerciseSolution` to the address that initially claimed them 
+- Call `ex12_withdraw_from_contract()` in the evaluator to prove your code works (2 pts)
+
+The total amount of points to collect from completing all exercises up to this point is : 25 points
 
 ### Approve and transferFrom
 - Use ERC20 function to allow your contract to manipulate your CTKs. Call `ex4_approvedExerciseSolution()` to claim points (1 pts) 
