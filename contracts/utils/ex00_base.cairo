@@ -110,6 +110,27 @@ func validate_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     return()
 end
 
+func validate_and_distribute_points_once{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        sender_address : felt,
+        exercise : felt,
+        points: felt):
+
+    # Checking if player has validated this exercise before
+    let(has_validated) = has_validated_exercise(sender_address, exercise)
+    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    if has_validated == 0:
+        # player has validated
+        validate_exercise(sender_address, exercise)
+        # Sending Setup, contract & deployment points
+        distribute_points(sender_address, points)
+    end
+    return()
+end
 
 func only_teacher{
         syscall_ptr : felt*, 

@@ -9,10 +9,9 @@ from starkware.cairo.common.math import assert_lt, assert_not_zero
 
 from contracts.utils.ex00_base import (
     tderc20_address,
-    distribute_points,
     ex_initializer,
     has_validated_exercise,
-    validate_exercise,
+    validate_and_distribute_points_once,
     only_teacher,
     Teacher_accounts
 )
@@ -146,21 +145,9 @@ func ex1a_assign_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_ch
 
     assign_rank_to_player(sender_address)
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 1)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 1)
-        # Sending points
-        distribute_points(sender_address, 1)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 1, 1)
+    return ()
 end
 
 
@@ -202,21 +189,9 @@ func ex1b_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
     let (difference) = uint256_sub(final_allowance, initial_allowance)
     assert difference = ten_tokens_as_uint256
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 2)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 2)
-        # Sending points
-        distribute_points(sender_address, 2)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 2, 2)
+    return ()
 end
 
 
@@ -240,21 +215,9 @@ func ex3_test_get_token{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     let (difference) = uint256_sub(initial_balance, final_balance)
     let (amount_is_difference) = uint256_eq(amount_received, difference)
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 3)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 3)
-        # Sending points
-        distribute_points(sender_address, 2)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 3, 2)
+    return ()
 end
 
 
@@ -289,21 +252,9 @@ func ex5_test_deny_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     # Saving the address of the contract that denied the token request
     first_listing_storage.write(submitted_exercise_address, 1)
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 5)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 5)
-        # Sending points
-        distribute_points(sender_address, 1)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 5, 1)
+    return ()
 end
 
 
@@ -332,21 +283,9 @@ func ex6_test_allow_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (difference) = uint256_sub(initial_balance, final_balance)
     let (amount_is_difference) = uint256_eq(amount_received, difference)
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 6)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 6)
-        # Sending points
-        distribute_points(sender_address, 2)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 6, 2)
+    return ()
 end
 
 
@@ -373,21 +312,9 @@ func ex7_test_deny_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     # Saving the address of the contract that denied the token request
     first_listing_multi_storage.write(submitted_exercise_address, 1)
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 7)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 7)
-        # Sending points
-        distribute_points(sender_address, 1)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 7, 1)
+    return ()
 end
 
 
@@ -419,21 +346,9 @@ func ex8_test_tier1_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     # Saving amount received from this contract
     second_listing_multi_storage.write(submitted_exercise_address, amount_received)
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 8)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 8)
-        # Sending points
-        distribute_points(sender_address, 2)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 8, 2)
+    return ()
 end
 
 
@@ -466,21 +381,9 @@ func ex9_test_tier2_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (is_equal) = uint256_eq(second_amount_received, twice_first_amount)
     assert is_equal = 1
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 9)
-
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 9)
-        # Sending points
-        distribute_points(sender_address, 2)
-    end
-    return()
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 9, 2)
+    return ()
 end
 
 
@@ -497,13 +400,11 @@ func ex10_claimed_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     let (positive) = uint256_lt(zero_as_uint256, dummy_token_balance)
     assert positive = 1
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 10)
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 10, 2)
+    return ()
+end
 
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
 
     if has_validated == 0:
         # player has validated
@@ -527,21 +428,10 @@ func submit_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
     player_exercise_solution_storage.write(sender_address, erc20_address)
     has_been_paired.write(erc20_address, 1)
 
-    # Checking if player has validated this exercise before
-    let (has_validated) = has_validated_exercise(sender_address, 0)
-    # This is necessary because of revoked references. Don't be scared, they won't stay around for too long...
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 0, 5)
 
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-
-    if has_validated == 0:
-        # player has validated
-        validate_exercise(sender_address, 0)
-        # Sending Setup, contract & deployment points
-        distribute_points(sender_address, 5)
-    end
-    return()
+    return ()
 end
 
 #
@@ -565,7 +455,7 @@ func assign_rank_to_player{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     else:
         next_rank_storage.write(new_next_rank)
     end
-    return()
+    return ()
 end
 
 
@@ -582,7 +472,7 @@ func set_random_values{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     assert values_len = max_rank
     # Storing passed values in the store
     set_a_random_value(values_len, values, column)
-    return()
+    return ()
 end
 
 #
