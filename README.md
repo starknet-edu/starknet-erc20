@@ -43,15 +43,19 @@ Today you will deploy your own ERC20 token on StarkNet!
 These points will be attributed manually if you do not manage to have your contract interact with the evaluator, or automatically in the first question.
 
 ### ERC20 basics
-- Call `ex1_getTickerAndSupply()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in `Evaluator.cairo` by calling getters `readTicker()` and `readSupply()`
+- Call `ex1a_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in `Evaluator.cairo` by calling getters `read_ticker()` and `read_supply()`
 - Create an ERC20 token contract with the proper ticker and supply (2 pt)
 - Deploy it to the Goerli-alpha testnet (1 pts)
-- Call `submitExercise()` in the Evaluator to configure the contract you want evaluated (Previous 5 points are attributed at that step)
-- Call `ex2_testErc20TickerAndSupply()` in the evaluator to receive your points (2 pts) 
+- Call `submit_exercise()` in the Evaluator to configure the contract you want evaluated (Previous 5 points are attributed at that step)
+- Call `ex1b_test_erc20()` in the evaluator to check ticker and supply and receive your points (2 pts) 
+
+The total amount of points to collect from completing all exercises up to this point is : 8 points
 
 ### Distributing and selling tokens
-- Create a `getToken()` function in your contract, deploy it, and call the `ex3_testGetToken()` function that distributes token to the caller (2 pts).
-- `getToken()` should return the amount of token distributed
+- Create a `get_token()` function in your contract, deploy it, and call the `ex3_test_get_token()` function that distributes token to the caller (2 pts).
+- `get_token()` should return the amount of token distributed
+
+The total amount of points to collect from completing all exercises up to this point is : 10 points
 
 ### Creating an ICO allow list
 - Create a customer allow listing function. Only allow listed users should be able to call `getToken()`
