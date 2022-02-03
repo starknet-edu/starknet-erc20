@@ -14,4 +14,10 @@ namespace IExerciseSolution:
     end
     func withdraw_tokens() -> (amoung: Uint256):
     end
+    func allowlist_level(account: felt) -> (level: felt)
+    end
+    func request_allowlist() -> (level_granted: felt)
+    end
+    func request_allowlist_level(level_requested: felt) -> (level_granted: felt)
+    end
 end

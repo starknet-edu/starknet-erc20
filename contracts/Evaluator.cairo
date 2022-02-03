@@ -213,21 +213,83 @@ func ex3_test_get_token{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
 
     let (difference) = uint256_sub(initial_balance, final_balance)
-    let (amount_is_difference) = uint256_eq(amount_received, difference)
+    let (is_equal) = uint256_eq(amount_received, difference)
+    assert is_equal = 1
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 3, 2)
     return ()
 end
 
-
 @external
-func ex4_test_buy_token{syscall_ptr : felt *, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-    # We'll see about this one later
+func ex5bis_test_fencing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    # Reading addresses
+    let (sender_address) = get_caller_address()
+    let (evaluator_address) = get_contract_address()
+    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address)
+    # TODO Check if user is allowed to get token
+    # let x = player_exercise_solution_storage.allowlist_level()
+    # assert x = 0
+    # Try to get token
+    let (initial_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
+    let (amount_received) = IExerciseSolution.get_token(contract_address = submitted_exercise_address)
+    
+    # Checking that nothing happened
+    # Returned value is 0
+    let zero_as_uint256: Uint256 = Uint256(0, 0)
+    let (difference) = uint256_sub(zero_as_uint256, amount_received)
+    assert difference = zero_as_uint256
+    # And the balance didn't change
+    let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
+    let (is_equal) = uint256_eq(initial_balance, final_balance)
+
+    assert is_equal = 1
+    
+    # # Saving the address of the contract that denied the token request
+    # first_listing_storage.write(submitted_exercise_address, 1)
+
+    # Request authorization
+    request_allowlist()
+
+    # Check that we can get token
+
+    let (initial_balance) = IERC20.balanceOf(contract_address=submitted_exercise_address, account=evaluator_address)
+    let (amount_received) = IExerciseSolution.get_token(contract_address=submitted_exercise_address)
+
+    # Checking that the returned value is positive
+    let zero_as_uint256: Uint256 = Uint256(0, 0)
+    let (positive) = uint256_lt(zero_as_uint256, amount_received)
+    assert positive = 1
+
+    # Checking that the balance did increase by that amount
+    let (final_balance) = IERC20.balanceOf(contract_address=submitted_exercise_address, account=evaluator_address)
+    let (difference) = uint256_sub(initial_balance, final_balance)
+    let (amount_is_difference) = uint256_eq(amount_received, difference)
+    assert amount_is_difference = 1
+
+    # Distributing points the first time this exercise is completed
+    validate_and_distribute_points_once(sender_address, 6, 2)
     return ()
 end
 
+func _test_get_token{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_erc20_address: felt) -> (has_credited_tokens: felt, amount_credited: Uint256):
+     # Try to get token
+    let (initial_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
+    let (amount_received) = IExerciseSolution.get_token(contract_address = submitted_exercise_address)
+    
+    # Checking that nothing happened
+    # Returned value is 0
+    let zero_as_uint256: Uint256 = Uint256(0, 0)
+    let (difference) = uint256_sub(zero_as_uint256, amount_received)
+    assert difference = zero_as_uint256
+    # And the balance didn't change
+    let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
+    let (is_equal) = uint256_eq(initial_balance, final_balance)
 
+    assert is_equal = 1
+    return(is_equal, difference)
+end
 
 @external
 func ex5_test_deny_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
@@ -247,8 +309,10 @@ func ex5_test_deny_listing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     assert difference = zero_as_uint256
     # And the balance didn't change
     let (final_balance) = IERC20.balanceOf(contract_address = submitted_exercise_address, account = evaluator_address)
-    let (amount_is_difference) = uint256_eq(initial_balance, final_balance)
+    let (is_equal) = uint256_eq(initial_balance, final_balance)
 
+    assert is_equal = 1
+    
     # Saving the address of the contract that denied the token request
     first_listing_storage.write(submitted_exercise_address, 1)
 
