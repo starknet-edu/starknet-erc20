@@ -3,14 +3,19 @@
 
 %lang starknet
 
-from contracts.token.ERC20.ITDERC20 import ITDERC20
-from contracts.utils.Iplayers_registry import Iplayers_registry
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import (
     Uint256, uint256_add, uint256_sub, uint256_le, uint256_lt, uint256_check
 )
 from starkware.cairo.common.math import assert_not_zero
 from starkware.starknet.common.syscalls import (get_contract_address, get_caller_address)
+
+from contracts.token.ERC20.IERC20 import IERC20
+from contracts.token.ERC20.ITDERC20 import ITDERC20
+from contracts.utils.Iplayers_registry import Iplayers_registry
+from contracts.lib.SKNTD import SKNTD_assert_uint256_difference
+from contracts.IERC20Solution import IERC20Solution
+
 #
 # Declaring storage vars
 # Storage vars are by default not visible through the ABI. They are similar to "private" variables in Solidity
@@ -29,7 +34,7 @@ func workshop_id_storage() -> (workshop_id_storage : felt):
 end
 
 @storage_var
-func Teacher_accounts(account: felt) -> (balance: felt):
+func Teacher_accounts(account : felt) -> (balance : felt):
 end
 
 #
@@ -38,19 +43,19 @@ end
 #
 
 @view
-func tderc20_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (_tderc20_address: felt, ):
+func tderc20_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (_tderc20_address : felt):
     let (_tderc20_address) = tderc20_address_storage.read()
     return (_tderc20_address)
 end
 
 @view
-func players_registry{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (_players_registry: felt):
+func players_registry{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (_players_registry : felt):
     let (_players_registry) = players_registry_storage.read()
     return (_players_registry)
 end
 
 @view
-func has_validated_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id: felt) -> (has_validated_exercise: felt):
+func has_validated_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account : felt, exercise_id : felt) -> (has_validated_exercise : felt):
     # reading player registry
     let (_players_registry) = players_registry_storage.read()
     let (_workshop_id) = workshop_id_storage.read()
@@ -65,13 +70,13 @@ end
 #
 
 func ex_initializer{
-        syscall_ptr : felt*, 
+        syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
     }(
-        _tderc20_address: felt,
-        _players_registry: felt,
-        _workshop_id: felt
+        _tderc20_address : felt,
+        _players_registry : felt,
+        _workshop_id : felt
     ):
     tderc20_address_storage.write(_tderc20_address)
     players_registry_storage.write(_players_registry)
@@ -85,10 +90,10 @@ end
 # Similar to internal functions in Solidity
 #
 
-func distribute_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(to: felt, amount: felt):
+func distribute_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(to : felt, amount : felt):
     # Converting felt to uint256. We assume it's a small number
     # We also add the required number of decimals
-    let points_to_credit: Uint256 = Uint256(amount*1000000000000000000, 0)
+    let points_to_credit : Uint256 = Uint256(amount*1000000000000000000, 0)
     # Retrieving contract address from storage
     let (contract_address) = tderc20_address_storage.read()
     # Calling the ERC20 contract to distribute points
@@ -96,7 +101,7 @@ func distribute_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     return()
 end
 
-func validate_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account: felt, exercise_id):
+func validate_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(account : felt, exercise_id):
     # reading player registry
     let (_players_registry) = players_registry_storage.read()
     let (_workshop_id) = workshop_id_storage.read()
@@ -113,7 +118,7 @@ end
 func validate_and_distribute_points_once{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         sender_address : felt,
         exercise : felt,
-        points: felt):
+        points : felt):
 
     # Checking if player has validated this exercise before
     let(has_validated) = has_validated_exercise(sender_address, exercise)
@@ -132,8 +137,40 @@ func validate_and_distribute_points_once{syscall_ptr : felt*, pedersen_ptr : Has
     return()
 end
 
+
+@external
+func test_get_tokens{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr
+        }(tested_contract : felt) -> (has_received_tokens : felt, amount_received : Uint256):
+    # This function will 
+    # * get initial evaluator balance on the given contract, 
+    # * call that contract's `get_tokens`
+    # * get the evaluator's final balance
+    # and return two values:
+    # * Whether the evaluator's balance increased or not
+    # * The balance difference (amount)
+    # It will also make sure that the two values are consistent (asserts will fail otherwise)
+    alloc_locals
+    let (evaluator_address) = get_contract_address()
+
+    let (initial_balance) = IERC20.balanceOf(contract_address=tested_contract, account=evaluator_address)
+    let (amount_received) = IERC20Solution.get_tokens(contract_address=tested_contract)
+
+    # Checking returned value
+    let zero_as_uint256 : Uint256 = Uint256(0, 0)
+    let (has_received_tokens) = uint256_lt(zero_as_uint256, amount_received)
+
+    # Checking that current balance is initial_balance + amount_received (even if 0)
+    let (final_balance) = IERC20.balanceOf(contract_address=tested_contract, account=evaluator_address)
+    SKNTD_assert_uint256_difference(final_balance, initial_balance, amount_received)
+
+    return (has_received_tokens, amount_received)
+end
+
 func only_teacher{
-        syscall_ptr : felt*, 
+        syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
     }():
@@ -143,15 +180,12 @@ func only_teacher{
     return ()
 end
 
-
-
-
 @external
 func set_teacher{
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
         range_check_ptr
-    }(account: felt, permission: felt):
+    }(account : felt, permission : felt):
     only_teacher()
     Teacher_accounts.write(account, permission)
 
@@ -160,11 +194,11 @@ end
 
 @view
 func is_teacher{
-        syscall_ptr : felt*, 
+        syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
-    }(account: felt) -> (permission: felt):
-    let (permission: felt) = Teacher_accounts.read(account)
+    }(account : felt) -> (permission : felt):
+    let (permission : felt) = Teacher_accounts.read(account)
     return (permission)
 end
 

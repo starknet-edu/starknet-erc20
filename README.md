@@ -11,7 +11,7 @@ It is aimed at developers that:
 - Understand the ERC20 token standard
 
 ​
-This workshop is the first in a series that will cover broad smart contract concepts (writing and deploying ERC20/ERC721, bridging assets, L1 <-> L2 messaging...). 
+This workshop is the third in a series that will cover broad smart contract concepts (writing and deploying ERC20/ERC721, bridging assets, L1 <-> L2 messaging...). 
 Interested in helping writing those? [Reach out](https://twitter.com/HenriLieutaud)!
 ​
 
@@ -42,53 +42,61 @@ Today you will deploy your own ERC20 token on StarkNet!
 - Set up your environment (2 pts). 
 These points will be attributed manually if you do not manage to have your contract interact with the evaluator, or automatically in the first question.
 
+## Part 1
 ### ERC20 basics
-- Call `ex1a_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in `Evaluator.cairo` by calling getters `read_ticker()` and `read_supply()`
+- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in `Evaluator.cairo` by calling getters `read_ticker()` and `read_supply()`
 - Create an ERC20 token contract with the proper ticker and supply (2 pt)
 - Deploy it to the Goerli-alpha testnet (1 pts)
-- Call `submit_exercise()` in the Evaluator to configure the contract you want evaluated (Previous 5 points are attributed at that step)
-- Call `ex1b_test_erc20()` in the evaluator to check ticker and supply and receive your points (2 pts) 
+- Call `submit_erc20_solution()` in the Evaluator to configure the contract you want evaluated (Previous 5 points are attributed at that step)
+- Call `ex2_test_erc20()` in the evaluator to check ticker and supply and receive your points (2 pts) 
 
 The total amount of points to collect from completing all exercises up to this point is : 8 points
 
-### Distributing and selling tokens
-- Create a `get_token()` function in your contract, deploy it, and call the `ex3_test_get_token()` function that distributes token to the caller (2 pts).
-- `get_token()` should return the amount of token distributed
+### Distributing tokens
+- Create a `get_tokens()` function in your contract, deploy it, and call the `ex3_test_get_token()` function that distributes token to the caller (2 pts).
+- `get_tokens()` should return the amount of token distributed
 
 The total amount of points to collect from completing all exercises up to this point is : 10 points
 
 ### Creating an ICO allow list
-- Create a customer allow listing function. Only allow listed users should be able to call `get_token()`
-- Call `ex5_test_deny_listing()` in the evaluator to show he can't get tokens using `get_token()` (1 pt)
-- Allow the evaluator to get tokens
-- Call `ex6_test_allow_listing()`in the evaluator to show he can now get tokens `get_token()` (2 pt)
+- Create a customer allow listing function. Only allow listed users should be able to call `get_tokens()`
+- Create a function `get_whitelisted()` that the evaluator will call during the exercise check to then be allowed to get tokens.
+- Call `ex4_5_6_get_whitelisted()` in the evaluator to show 
+  - It can't get tokens using `get_tokens()` (1 pt)
+  - It can call `get_whitelisted` and have confirmation that it went through (1 pt)
+  - It can then get tokens using the same `get_tokens()` (2 pt)
 
-The total amount of points to collect from completing all exercises up to this point is : 13 points
+The total amount of points to collect from completing all exercises up to this point is : 14 points
 
 ### Creating multi tier allow list
 - Create a customer multi tier listing function. Only allow listed users should be able to call `get_token()`; and customers should receive a different amount of token based on their level
-- Call `ex7_test_deny_listing()` in the evaluator to show he can't get tokens using `get_token()` (1 pt)
-- Add the evaluator in the first tier. He should now be able to get N tokens 
-- Call `ex8_test_tier1_listing()` in the evaluator to show he can now get tokens(2 pt)
-- Add the evaluator in the second tier. He should now be able to get 2N tokens
-- Call `ex9_test_tier2_listing()` in the evaluator to show he can now get more tokens(2 pt)
+- Create a function `get_whitelisted_tiers()` that the evaluator will call during the exercise check to be allowed to get tokens at a certain tier level
+- Call `ex7_8_9_get_whitelisted_tiers()` in the evaluator to show 
+  - It can't get tokens using `get_tokens()` (1 pt)
+  - It can call `get_whitelisted_tiers(1)` , then call `get_tokens()` and get N tokens (2 pt)
+  - It can call `get_whitelisted_tiers(2)` , then call `get_tokens()` and get 2N tokens (2 pt)
 
-The total amount of points to collect from completing all exercises up to this point is : 18 points
+The total amount of points to collect from completing all exercises up to this point is : 19 points
 
-### Manipulating ERC20 tokens from within contracts
+## Part 2
+### Submissions
+
+Submissions for this part are given by calling `submit_exercise_solution()` in the Evaluator
+
+### Manipulating ERC20 tokens from other contracts
 - Manually claim tokens on the predeployed claimable ERC20 (DTK-20 tokens) (1 pts)
 - Claim your points by calling `ex10_claimed_tokens()` in the evaluator (1 pts)
 
-The total amount of points to collect from completing all exercises up to this point is : 20 points
+The total amount of points to collect from completing all exercises up to this point is : 21 points
 
 ### Calling another contract from your contract
 - Create a contract `ExerciseSolution` that can claim DTK-20 tokens. Keep track of addresses who claimed tokens through `ExerciseSolution` , and how much. This amount should be visible by calling `tokens_in_custody` on `ExerciseSolution` 
-- Deploy ExerciseSolution and submit it to the evaluator with `submit_exercise()`.
+- Deploy ExerciseSolution and submit it to the evaluator with `submit_exercise_solution()`.
 - Call `ex11_claimed_from_contract()` in the evaluator to prove your code works (3 pts)
 - Create a function `withdraw_tokens()` in `ExerciseSolution` to withdraw the claimed tokens from the `ExerciseSolution` to the address that initially claimed them 
 - Call `ex12_withdraw_from_contract()` in the evaluator to prove your code works (2 pts)
 
-The total amount of points to collect from completing all exercises up to this point is : 25 points
+The total amount of points to collect from completing all exercises up to this point is : 26 points
 
 ### Approve and transferFrom
 - Use ERC20 function to allow your contract to manipulate your CTKs. Call `ex4_approvedExerciseSolution()` to claim points (1 pts) 
