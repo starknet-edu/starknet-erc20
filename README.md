@@ -99,18 +99,22 @@ The total amount of points to collect from completing all exercises up to this p
 The total amount of points to collect from completing all exercises up to this point is : 26 points
 
 ### Approve and transferFrom
-- Use ERC20 function to allow your contract to manipulate your CTKs. Call `ex4_approvedExerciseSolution()` to claim points (1 pts) 
-- Use ERC20 to revoke this authorization. Call `ex5_revokedExerciseSolution()` to claim points (1 pts)
-- Create a function `depositTokens()` through which a user can deposit CTKs in ExerciseSolution, using transferFrom 
-- Call `ex6_depositTokens` in the evaluator to prove your code work (2 pts)
+- Use ERC20 function to allow your contract to manipulate your DTKs. Call `ex13_approved_exercise_solution()` to claim points (1 pts) 
+- Use ERC20 to revoke this authorization. Call `ex14_revoked_exercise_solution()` to claim points (1 pts)
+- Create a function `deposit_tokens()` through which a user can deposit DTKs in ExerciseSolution, using transferFrom 
+- Call `ex15_deposit_tokens` in the evaluator to prove your code work (2 pts)
+
+The total amount of points to collect from completing all exercises up to this point is : 30 points
 
 ### Tracking user deposits with a deposit wrapper ERC20
 - Create and deploy a new ERC20 `ExerciseSolutionToken` to track user deposit. This ERC20 should be mintable and mint authorization given to ExerciseSolution. 
-- Call `ex7_createERC20` in the evaluator to prove your code work (2 pts)
-- Update the deposit function on `ExerciseSolution` so that user balances are tokenized. When a deposit is made in `ExerciseSolution` , tokens are minted in `ExerciseSolutionToken` and transferred to the address depositing. 
-- Call `ex8_depositAndMint` in the evaluator to prove your code work (2 pts)
-- Update the `ExerciseSolution` withdraw function so that it uses transferFrom() in `ExerciseSolutionToken`, burns these tokens, and returns the CTKs 
-- Call `ex9_withdrawAndBurn` in the evaluator to prove your code work (2 pts)
+- Call `ex16_create_ERC20` in the evaluator to prove your code work (2 pts)
+- Update the deposit function on `ExerciseSolution` so that user balances are tokenized. When a deposit is made in `ExerciseSolution`, tokens are minted in `ExerciseSolutionToken` and transferred to the address depositing. 
+- Call `ex17_deposit_and_mint` in the evaluator to prove your code work (2 pts)
+- Update the `ExerciseSolution` withdraw function so that it uses transferFrom() in `ExerciseSolutionToken`, burns these tokens, and returns the DTKs 
+- Call `ex18_withdrawAndBurn` in the evaluator to prove your code work (2 pts)
+
+The total amount of points to collect from completing all exercises up to this point is : 36 points
 
 ## Exercises & Contract addresses 
 To be updated after deployment
