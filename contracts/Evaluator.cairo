@@ -49,7 +49,11 @@ func has_been_paired(contract_address: felt) -> (has_been_paired: felt):
 end
 
 @storage_var
-func player_exercise_solution_storage(player_address: felt) -> (contract_address: felt):
+func player_exercise_erc20_solution_storage(player_address: felt) -> (contract_address: felt):
+end
+
+@storage_var
+func player_exercise_token_holder_solution_storage(player_address: felt) -> (contract_address: felt):
 end
 
 @storage_var
@@ -480,6 +484,8 @@ func ex11_claimed_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
 
     let (initial_dummy_token_custody) = IExerciseSolution.tokens_in_custody(
         contract_address=submitted_exercise_address, account=contract_address)
+    # TODO add a check on submitted_exercise_address balance in read_dummy_token_address
+    # let (dummy_token_balance_exercise_init) = IERC20.balanceOf(contract_address=read_dummy_token_address, account=submitted_exercise_address)
 
     # Claiming tokens for the evaluator
     let (claimed_amount) = IExerciseSolution.get_tokens_from_contract(contract_address=submitted_exercise_address)
@@ -496,6 +502,9 @@ func ex11_claimed_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     let (custody_difference) = uint256_sub(final_dummy_token_custody, initial_dummy_token_custody)
     let (has_increased) = uint256_lt(zero_as_uint256, custody_difference)
     assert has_increased = 1
+
+    # TODO add a check on submitted_exercise_address balance in read_dummy_token_address
+    # let (dummy_token_balance_exercise_end) = IERC20.balanceOf(contract_address=read_dummy_token_address, account=submitted_exercise_address)
 
     # And finally checking that the amount returned is the same as the increase
     let (is_equal) = uint256_eq(custody_difference, claimed_amount)
