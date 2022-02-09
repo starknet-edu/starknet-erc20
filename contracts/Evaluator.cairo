@@ -13,7 +13,7 @@ from starkware.cairo.common.uint256 import (
 )
 
 from contracts.lib.SKNTD import (
-    SKNTD_assert_uint256_difference, SKNTD_assert_uint256_eq, SKNTD_assert_uint256_le, 
+    SKNTD_assert_uint256_difference, SKNTD_assert_uint256_eq, SKNTD_assert_uint256_le,
     SKNTD_assert_uint256_strictly_positive, SKNTD_assert_uint256_zero
 )
 
@@ -225,19 +225,28 @@ func ex4_5_6_get_whitelisted{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     let (sender_address) = get_caller_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address, part=1)
 
+    # TODO Check if user is allowed to get token
+    # let x = player_exercise_solution_storage.allowlist_level()
+    # assert x = 0
+
+    # Try to get token
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
     let(has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
+    # Checking that nothing happened
     assert has_received_tokens = 0
 
     # Distributing points the first time this exercise is completed until this point
     validate_and_distribute_points_once(sender_address, 4, 1)
 
-    # Get whitelisted by asking politely
-    let (whitelisted) = IERC20Solution.get_whitelisted(contract_address=submitted_exercise_address)
+    # Get whitelisted by asking politely  # TODO: renaming
+    let (whitelisted) = IERC20Solution.request_allowlist(contract_address=submitted_exercise_address)
     assert whitelisted = 1
     validate_and_distribute_points_once(sender_address, 5, 1)
+    # TODO
+    # let x = player_exercise_solution_storage.allowlist_level()
+    # assert x != 0
 
-    # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
+    # Check that we can now get tokens
     let(has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
     assert has_received_tokens = 1
 
@@ -382,7 +391,7 @@ func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (withdrawn_amount) = IExerciseSolution.withdraw_tokens(contract_address=submitted_exercise_address)
 
     # Checking that the amount is equal to the amount claimed in previous exercise
-    let (claimed_amount) = exercise_claimed_for_amount_storage.read(submitted_exercise_address) 
+    let (claimed_amount) = exercise_claimed_for_amount_storage.read(submitted_exercise_address)
     SKNTD_assert_uint256_eq(withdrawn_amount, claimed_amount)
 
     ############### Balances checks
@@ -437,7 +446,7 @@ func ex14_revoked_exercise_solution{syscall_ptr : felt*, pedersen_ptr : HashBuil
     let (submission_dtk_allowance) = IERC20.allowance(
         contract_address=read_dtk_address, owner=sender_address, spender=submitted_exercise_address)
     SKNTD_assert_uint256_zero(submission_dtk_allowance)
-    
+
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 14, 1)
     return ()
@@ -487,7 +496,7 @@ func ex15_deposit_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     let (submission_dtk_allowance) = IERC20.allowance(
         contract_address=read_dtk_address, owner=sender_address, spender=submitted_exercise_address)
     SKNTD_assert_uint256_zero(submission_dtk_allowance)
-    
+
     ############### Custody check
     # Check that the custody balance did increase by ten tokens
     let (final_dtk_custody) = IExerciseSolution.tokens_in_custody(submitted_exercise_address, evaluator_address)
@@ -537,7 +546,7 @@ func ex17_deposit_and_mint{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     # Reading ExerciseSolutionToken (est) supply and evaluator's initial balance
     let (initial_est_supply) = IERC20.totalSupply(submitted_exercise_token_address)
     let (initial_est_balance_eval) = IERC20.balanceOf(submitted_exercise_token_address, evaluator_address)
-    
+
     # Reading initial balances of DTK
     let (initial_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
     let (initial_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
@@ -561,7 +570,7 @@ func ex17_deposit_and_mint{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     SKNTD_assert_uint256_difference(
         initial_dtk_balance_eval, final_dtk_balance_eval, ten_as_uint256)
 
-    ############### Allowance check 
+    ############### Allowance check
     # Check the dummy token allowance of ExerciseSolution is back to zero
     let (submission_dtk_allowance) = IERC20.allowance(
         contract_address=read_dtk_address, owner=sender_address, spender=submitted_exercise_address)
@@ -595,7 +604,7 @@ func ex18_withdraw_and_burn{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     # Reading ExerciseSolutionToken (est) supply and evaluator's initial balance
     let (initial_est_supply) = IERC20.totalSupply(submitted_exercise_token_address)
     let (initial_est_balance_eval) = IERC20.balanceOf(submitted_exercise_token_address, evaluator_address)
-    
+
     # Reading initial balances of DTK
     let (initial_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
     let (initial_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
