@@ -59,22 +59,24 @@ The total amount of points to collect from completing all exercises up to this p
 The total amount of points to collect from completing all exercises up to this point is : 10 points
 
 ### Creating an ICO allow list
-- Create a customer allow listing function. Only allow listed users should be able to call `get_tokens()`
-- Create a function `get_whitelisted()` that the evaluator will call during the exercise check to then be allowed to get tokens.
-- Call `ex4_5_6_get_whitelisted()` in the evaluator to show 
+- Create a customer allow listing function. Only allow listed users should be able to call `get_tokens()`.
+- Create a function `request_allowlist()` that the evaluator will call during the exercise check to be allowed to get tokens.
+- Create a function `allowlist_level()` that can be called by anyone to know whether an account is allowed to get tokens.
+- Call `ex4_5_6_test_fencing()` in the evaluator to show 
   - It can't get tokens using `get_tokens()` (1 pt)
-  - It can call `get_whitelisted` and have confirmation that it went through (1 pt)
+  - It can call `request_allowlist()` and have confirmation that it went through (1 pt)
   - It can then get tokens using the same `get_tokens()` (2 pt)
 
 The total amount of points to collect from completing all exercises up to this point is : 14 points
 
 ### Creating multi tier allow list
 - Create a customer multi tier listing function. Only allow listed users should be able to call `get_token()`; and customers should receive a different amount of token based on their level
-- Create a function `get_whitelisted_tiers()` that the evaluator will call during the exercise check to be allowed to get tokens at a certain tier level
-- Call `ex7_8_9_get_whitelisted_tiers()` in the evaluator to show 
+- Create a function `request_allowlist_level()` that the evaluator will call during the exercise check to be allowed to get tokens at a certain tier level
+- Modify the function `allowlist_level()` so that it returns the allowed level of accounts.
+- Call `ex7_8_9_test_fencing_levels()` in the evaluator to show 
   - It can't get tokens using `get_tokens()` (1 pt)
-  - It can call `get_whitelisted_tiers(1)` , then call `get_tokens()` and get N tokens (2 pt)
-  - It can call `get_whitelisted_tiers(2)` , then call `get_tokens()` and get 2N tokens (2 pt)
+  - It can call `request_allowlist_level(1)` , then call `get_tokens()` and get N tokens (2 pt)
+  - It can call `request_allowlist_level(2)` , then call `get_tokens()` and get 2N tokens (2 pt)
 
 The total amount of points to collect from completing all exercises up to this point is : 19 points
 

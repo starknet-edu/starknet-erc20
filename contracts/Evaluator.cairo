@@ -97,20 +97,23 @@ func next_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 end
 
 @view
-func assigned_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address : felt) -> (rank : felt):
+func assigned_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        player_address : felt) -> (rank : felt):
     let (rank) = assigned_rank_storage.read(player_address)
     return (rank)
 end
 
 @view
-func read_ticker{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address : felt) -> (ticker : felt):
+func read_ticker{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        player_address : felt) -> (ticker : felt):
     let (rank) = assigned_rank(player_address)
     let (ticker) = random_attributes_storage.read(0, rank)
     return (ticker)
 end
 
 @view
-func read_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(player_address : felt) -> (supply : Uint256):
+func read_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        player_address : felt) -> (supply : Uint256):
     let (rank) = assigned_rank(player_address)
     let (supply_felt) = random_attributes_storage.read(1, rank)
     let supply : Uint256 = Uint256(supply_felt, 0)
@@ -185,13 +188,24 @@ func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     # Checking some ERC20 functions were created
     let (evaluator_address) = get_contract_address()
     let (balance) = IERC20.balanceOf(contract_address=submitted_exercise_address, account=evaluator_address)
-    let (initial_allowance) = IERC20.allowance(contract_address=submitted_exercise_address, owner=evaluator_address, spender=sender_address)
+    let (initial_allowance) = IERC20.allowance(
+        contract_address=submitted_exercise_address, owner=evaluator_address, spender=sender_address)
 
     # 10 tokens
     let ten_as_uint256 : Uint256 = Uint256(10 * 1000000000000000000, 0)
     IERC20.approve(contract_address=submitted_exercise_address, spender=sender_address, amount=ten_as_uint256)
 
-    let (final_allowance) = IERC20.allowance(contract_address=submitted_exercise_address, owner=evaluator_address, spender=sender_address)
+    # Check that the allowance did raise by 10
+    let (final_allowance) = IERC20.allowance(
+        contract_address=submitted_exercise_address, owner=evaluator_address, spender=sender_address)
+
+    # While we can assert that two felts are equal with `assert a = b`, it is a little longer for uint256:
+    let (difference) = uint256_sub(final_allowance, initial_allowance)
+    let (is_equal) = uint256_eq(difference, ten_as_uint256)
+    assert is_equal = 1
+
+    # The next line does the same in one line, we'll rather use that later on.
+    # It is defined in `contracts/lib/SKNTD.cairo` with similar ones to assert equality, positivity, etc.
     SKNTD_assert_uint256_difference(after=final_allowance, before=initial_allowance, expected_difference=ten_as_uint256)
 
     # Distributing points the first time this exercise is completed
@@ -218,36 +232,38 @@ end
 
 
 @external
-func ex4_5_6_get_whitelisted{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func ex4_5_6_test_fencing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     alloc_locals
     # Reading addresses
     let (evaluator_address) = get_contract_address()
     let (sender_address) = get_caller_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address, part=1)
 
-    # TODO Check if user is allowed to get token
-    # let x = player_exercise_solution_storage.allowlist_level()
-    # assert x = 0
+    # Check that Evaluator is not allowed to get tokens
+    let (allowlist_level_eval) = IERC20Solution.allowlist_level(
+        contract_address=submitted_exercise_address, account=evaluator_address)
+    assert allowlist_level_eval = 0
 
     # Try to get token
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
-    let(has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
+    let (has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
     # Checking that nothing happened
     assert has_received_tokens = 0
 
     # Distributing points the first time this exercise is completed until this point
     validate_and_distribute_points_once(sender_address, 4, 1)
 
-    # Get whitelisted by asking politely  # TODO: renaming
+    # Get whitelisted by asking politely
     let (whitelisted) = IERC20Solution.request_allowlist(contract_address=submitted_exercise_address)
     assert whitelisted = 1
     validate_and_distribute_points_once(sender_address, 5, 1)
-    # TODO
-    # let x = player_exercise_solution_storage.allowlist_level()
-    # assert x != 0
+
+    # Check that Evaluator is whitelisted
+    let (allowlist_level_eval) = IERC20Solution.allowlist_level(submitted_exercise_address, evaluator_address)
+    assert_not_zero(allowlist_level_eval)
 
     # Check that we can now get tokens
-    let(has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
+    let (has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
     assert has_received_tokens = 1
 
     # Distributing points the first time this exercise is completed until the end
@@ -257,7 +273,7 @@ end
 
 
 @external
-func ex7_8_9_get_whitelisted_tiers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     alloc_locals
     # Reading addresses
     let (evaluator_address) = get_contract_address()
@@ -265,15 +281,19 @@ func ex7_8_9_get_whitelisted_tiers{syscall_ptr : felt*, pedersen_ptr : HashBuilt
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address, part=1)
 
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
-    let(has_received, _) = test_get_tokens(submitted_exercise_address)
+    let (has_received, _) = test_get_tokens(submitted_exercise_address)
     assert has_received = 0
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 7, 1)
 
-    # Get whitelisted at tier 1 still by asking politely
-    let (level) = IERC20Solution.get_whitelisted_tiers(contract_address=submitted_exercise_address, requested_tier=1)
+    # Get whitelisted at level 1
+    let (level) = IERC20Solution.request_allowlist_level(contract_address=submitted_exercise_address, level_requested=1)
     assert level = 1
+
+    # Check allowlist_level view reflects the same change
+    let (allowlist_level_eval) = IERC20Solution.allowlist_level(submitted_exercise_address, evaluator_address)
+    assert allowlist_level_eval = 1
 
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
     let (has_received, first_amount_received) = test_get_tokens(submitted_exercise_address)
@@ -282,17 +302,23 @@ func ex7_8_9_get_whitelisted_tiers{syscall_ptr : felt*, pedersen_ptr : HashBuilt
     # Distributing points the first time this exercise is completed until this point
     validate_and_distribute_points_once(sender_address, 8, 2)
 
-    # Get whitelisted at tier 2
-    let (level) = IERC20Solution.get_whitelisted_tiers(contract_address=submitted_exercise_address, requested_tier=2)
+    # Get whitelisted at level 2
+    let (level) = IERC20Solution.request_allowlist_level(contract_address=submitted_exercise_address, level_requested=2)
     assert level = 2
+
+    # Check allowlist_level view
+    let (allowlist_level_eval) = IERC20Solution.allowlist_level(submitted_exercise_address, evaluator_address)
+    assert allowlist_level_eval = 2
 
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
     let (has_received, second_amount_received) = test_get_tokens(submitted_exercise_address)
     assert has_received = 1
 
-    # Check that we received twice the amount received with tier 1
+    # Check that we received twice the amount received with level 1
     let two_as_uint256 : Uint256 = Uint256(2, 0)
     let twice_first_amount : Uint256 = uint256_mul(first_amount_received, two_as_uint256)
+
+
     SKNTD_assert_uint256_eq(second_amount_received, twice_first_amount)
 
     # Distributing points the first time this exercise is completed
