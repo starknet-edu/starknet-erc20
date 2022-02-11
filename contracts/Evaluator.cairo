@@ -54,10 +54,6 @@ end
 func player_exercise_solution_storage(player_address : felt, part : felt) -> (contract_address : felt):
 end
 
-@storage_var
-func exercise_claimed_for_amount_storage(submitted_exercise_address : felt) -> (amount : Uint256):
-end
-
 #
 # Declaring getters
 # Public variables should be declared explicitly with a getter
@@ -343,9 +339,6 @@ func ex11_claimed_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     # Checking that the amount returned is positive
     SKNTD_assert_uint256_strictly_positive(claimed_amount)
 
-    # Saving that amount to check it is the same we withdraw later
-    exercise_claimed_for_amount_storage.write(submitted_exercise_address, claimed_amount)
-
     # Checking that the amount in custody increased
     let (final_dtk_custody) = IExerciseSolution.tokens_in_custody(
         contract_address=submitted_exercise_address, account=evaluator_address)
@@ -390,9 +383,8 @@ func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     # Withdrawing tokens claimed in previous exercise
     let (withdrawn_amount) = IExerciseSolution.withdraw_tokens(contract_address=submitted_exercise_address)
 
-    # Checking that the amount is equal to the amount claimed in previous exercise
-    let (claimed_amount) = exercise_claimed_for_amount_storage.read(submitted_exercise_address)
-    SKNTD_assert_uint256_eq(withdrawn_amount, claimed_amount)
+    # Checking that the amount is equal to the total evaluator balance in custody
+    SKNTD_assert_uint256_eq(withdrawn_amount, initial_dtk_custody)
 
     ############### Balances checks
     # Checking that the evaluator's balance is now increased by `withdrawn_amount`
