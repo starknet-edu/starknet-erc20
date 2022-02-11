@@ -38,6 +38,12 @@ func SKNTD_assert_uint256_le{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     return ()
 end
 
+func SKNTD_assert_uint256_lt{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        a : Uint256, b : Uint256):
+    let (is_le) = uint256_lt(a, b)
+    assert is_le = 1
+    return ()
+end
 func SKNTD_assert_uint256_zero{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         a : Uint256):
     let zero : Uint256 = Uint256(0, 0)

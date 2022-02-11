@@ -13,6 +13,9 @@ namespace IExerciseSolution:
     func get_tokens_from_contract() -> (amount : Uint256):
     end
 
-    func withdraw_tokens() -> (amount : Uint256):
+    func withdraw_all_tokens() -> (amount : Uint256):
+    end
+
+    func deposit_tracker_token() -> (deposit_tracker_token_address : felt):
     end
 end

@@ -14,7 +14,7 @@ from starkware.cairo.common.uint256 import (
 
 from contracts.lib.SKNTD import (
     SKNTD_assert_uint256_difference, SKNTD_assert_uint256_eq, SKNTD_assert_uint256_le,
-    SKNTD_assert_uint256_strictly_positive, SKNTD_assert_uint256_zero
+    SKNTD_assert_uint256_strictly_positive, SKNTD_assert_uint256_zero, SKNTD_assert_uint256_lt
 )
 
 from contracts.utils.ex00_base import (
@@ -47,7 +47,7 @@ end
 
 # Part 1 is "ERC20", part 2 is "Exercise"
 @storage_var
-func has_been_paired(contract_address : felt, part : felt) -> (has_been_paired : felt):
+func has_been_paired(contract_address : felt) -> (has_been_paired : felt):
 end
 
 @storage_var
@@ -220,23 +220,27 @@ func ex4_5_6_test_fencing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     # Checking that nothing happened
     assert has_received_tokens = 0
 
-    # Distributing points the first time this exercise is completed until this point
-    validate_and_distribute_points_once(sender_address, 4, 1)
+    
 
     # Get whitelisted by asking politely
     let (whitelisted) = IERC20Solution.request_allowlist(contract_address=submitted_exercise_address)
     assert whitelisted = 1
-    validate_and_distribute_points_once(sender_address, 5, 1)
 
     # Check that Evaluator is whitelisted
     let (allowlist_level_eval) = IERC20Solution.allowlist_level(submitted_exercise_address, evaluator_address)
     assert_not_zero(allowlist_level_eval)
 
+    
     # Check that we can now get tokens
     let (has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
     assert has_received_tokens = 1
 
-    # Distributing points the first time this exercise is completed until the end
+    # Distributing points the first time this exercise is completed until this point
+    # Implementing allow list view function
+    validate_and_distribute_points_once(sender_address, 4, 1)
+    # Implementing allow list management
+    validate_and_distribute_points_once(sender_address, 5, 1)
+    # Linking get tokens to allow list 
     validate_and_distribute_points_once(sender_address, 6, 2)
     return ()
 end
@@ -254,8 +258,7 @@ func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (has_received, _) = test_get_tokens(submitted_exercise_address)
     assert has_received = 0
 
-    # Distributing points the first time this exercise is completed
-    validate_and_distribute_points_once(sender_address, 7, 1)
+    
 
     # Get whitelisted at level 1
     let (level) = IERC20Solution.request_allowlist_level(contract_address=submitted_exercise_address, level_requested=1)
@@ -269,8 +272,7 @@ func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (has_received, first_amount_received) = test_get_tokens(submitted_exercise_address)
     assert has_received = 1
 
-    # Distributing points the first time this exercise is completed until this point
-    validate_and_distribute_points_once(sender_address, 8, 2)
+    
 
     # Get whitelisted at level 2
     let (level) = IERC20Solution.request_allowlist_level(contract_address=submitted_exercise_address, level_requested=2)
@@ -284,14 +286,16 @@ func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (has_received, second_amount_received) = test_get_tokens(submitted_exercise_address)
     assert has_received = 1
 
-    # Check that we received twice the amount received with level 1
-    let two_as_uint256 : Uint256 = Uint256(2, 0)
-    let twice_first_amount : Uint256 = uint256_mul(first_amount_received, two_as_uint256)
-
-
-    SKNTD_assert_uint256_eq(second_amount_received, twice_first_amount)
+    # Check that we received more with level 2 than with level 1
+    SKNTD_assert_uint256_lt(first_amount_received, second_amount_received)
 
     # Distributing points the first time this exercise is completed
+    # Distributing points the first time this exercise is completed
+    # Denying claiming to non allowed contracts
+    validate_and_distribute_points_once(sender_address, 7, 1)
+    # Allowing level 1 claimers
+    validate_and_distribute_points_once(sender_address, 8, 2)
+    # Distributing more points to level 2 claimers
     validate_and_distribute_points_once(sender_address, 9, 2)
     return ()
 end
@@ -381,7 +385,7 @@ func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
 
     ############### Actions
     # Withdrawing tokens claimed in previous exercise
-    let (withdrawn_amount) = IExerciseSolution.withdraw_tokens(contract_address=submitted_exercise_address)
+    let (withdrawn_amount) = IExerciseSolution.withdraw_all_tokens(contract_address=submitted_exercise_address)
 
     # Checking that the amount is equal to the total evaluator balance in custody
     SKNTD_assert_uint256_eq(withdrawn_amount, initial_dtk_custody)
@@ -501,7 +505,7 @@ end
 
 
 @external
-func ex16_create_ERC20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func ex16_tokenized_deposits{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     alloc_locals
     # Reading addresses
     let (evaluator_address) = get_contract_address()
@@ -606,7 +610,7 @@ func ex18_withdraw_and_burn{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     IERC20.approve(submitted_exercise_token_address, evaluator_address, initial_est_balance_eval)
 
     # Withdrawing tokens deposited in previous exercise
-    let (withdrawn_amount) = IExerciseSolution.withdraw_tokens(contract_address=submitted_exercise_address)
+    let (withdrawn_amount) = IExerciseSolution.withdraw_all_tokens(contract_address=submitted_exercise_address)
 
     # Checking that the amount is at least equal to the amount deposited in previous exercise (10 tokens)
     let ten_tokens_uint256 : Uint256 = Uint256(10, 0)
@@ -645,12 +649,12 @@ func submit_erc20_solution{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     # Reading caller address
     let (sender_address) = get_caller_address()
     # Checking this contract was not used by another group before
-    let (has_solution_been_submitted_before) = has_been_paired.read(erc20_address, 1)
+    let (has_solution_been_submitted_before) = has_been_paired.read(erc20_address)
     assert has_solution_been_submitted_before = 0
 
     # Assigning passed ERC20 as player ERC20
     player_exercise_solution_storage.write(sender_address, erc20_address, 1)
-    has_been_paired.write(erc20_address, 1, 1)
+    has_been_paired.write(erc20_address, 1)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 0, 5)
@@ -664,12 +668,12 @@ func submit_exercise_solution{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
     # Reading caller address
     let (sender_address) = get_caller_address()
     # Checking this contract was not used by another group before
-    let (has_solution_been_submitted_before) = has_been_paired.read(exercise_address, 2)
+    let (has_solution_been_submitted_before) = has_been_paired.read(exercise_address)
     assert has_solution_been_submitted_before = 0
 
     # Assigning passed ExerciseSolution to the player
     player_exercise_solution_storage.write(sender_address, exercise_address, 2)
-    has_been_paired.write(exercise_address, 2, 1)
+    has_been_paired.write(exercise_address, 1)
     return ()
 end
 
@@ -679,12 +683,12 @@ func submit_exercise_solution_token{syscall_ptr : felt*, pedersen_ptr : HashBuil
     # Reading caller address
     let (sender_address) = get_caller_address()
     # Checking this contract was not used by another group before
-    let (has_solution_been_submitted_before) = has_been_paired.read(exercise_address, 3)
+    let (has_solution_been_submitted_before) = has_been_paired.read(exercise_address)
     assert has_solution_been_submitted_before = 0
 
     # Assigning passed ExerciseSolutionToken to the player
     player_exercise_solution_storage.write(sender_address, exercise_address, 3)
-    has_been_paired.write(exercise_address, 3, 1)
+    has_been_paired.write(exercise_address, 1)
     return ()
 end
 
