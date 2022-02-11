@@ -138,36 +138,6 @@ func validate_and_distribute_points_once{syscall_ptr : felt*, pedersen_ptr : Has
 end
 
 
-@external
-func test_get_tokens{
-        syscall_ptr : felt*,
-        pedersen_ptr : HashBuiltin*,
-        range_check_ptr
-        }(tested_contract : felt) -> (has_received_tokens : felt, amount_received : Uint256):
-    # This function will 
-    # * get initial evaluator balance on the given contract, 
-    # * call that contract's `get_tokens`
-    # * get the evaluator's final balance
-    # and return two values:
-    # * Whether the evaluator's balance increased or not
-    # * The balance difference (amount)
-    # It will also make sure that the two values are consistent (asserts will fail otherwise)
-    alloc_locals
-    let (evaluator_address) = get_contract_address()
-
-    let (initial_balance) = IERC20.balanceOf(contract_address=tested_contract, account=evaluator_address)
-    let (amount_received) = IERC20Solution.get_tokens(contract_address=tested_contract)
-
-    # Checking returned value
-    let zero_as_uint256 : Uint256 = Uint256(0, 0)
-    let (has_received_tokens) = uint256_lt(zero_as_uint256, amount_received)
-
-    # Checking that current balance is initial_balance + amount_received (even if 0)
-    let (final_balance) = IERC20.balanceOf(contract_address=tested_contract, account=evaluator_address)
-    SKNTD_assert_uint256_difference(final_balance, initial_balance, amount_received)
-
-    return (has_received_tokens, amount_received)
-end
 
 func only_teacher{
         syscall_ptr : felt*,
