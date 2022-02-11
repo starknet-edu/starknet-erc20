@@ -30,4 +30,7 @@ namespace IERC20:
 
     func approve(spender : felt, amount : Uint256) -> (success : felt):
     end
+    
+    func faucet() -> (amount : felt):
+    end
 end
