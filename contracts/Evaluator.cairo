@@ -23,7 +23,11 @@ from contracts.utils.ex00_base import (
     has_validated_exercise,
     validate_and_distribute_points_once,
     only_teacher,
-    Teacher_accounts,
+    teacher_accounts,
+    assigned_rank,
+    assign_rank_to_player,
+    random_attributes_storage,
+    max_rank_storage
 )
 
 from contracts.token.ERC20.ITDERC20 import ITDERC20
@@ -39,22 +43,6 @@ from contracts.IExerciseSolution import IExerciseSolution
 
 @storage_var
 func dummy_token_address_storage() -> (dummy_token_address_storage : felt):
-end
-
-@storage_var
-func max_rank_storage() -> (max_rank : felt):
-end
-
-@storage_var
-func next_rank_storage() -> (next_rank : felt):
-end
-
-@storage_var
-func random_attributes_storage(column : felt, rank : felt) -> (value : felt):
-end
-
-@storage_var
-func assigned_rank_storage(player_address :  felt) -> (rank : felt):
 end
 
 # Part 1 is "ERC20", part 2 is "Exercise"
@@ -90,19 +78,6 @@ func player_exercise_solution{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
 end
 
 @view
-func next_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (next_rank : felt):
-    let (next_rank) = next_rank_storage.read()
-    return (next_rank)
-end
-
-@view
-func assigned_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        player_address : felt) -> (rank : felt):
-    let (rank) = assigned_rank_storage.read(player_address)
-    return (rank)
-end
-
-@view
 func read_ticker{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         player_address : felt) -> (ticker : felt):
     let (rank) = assigned_rank(player_address)
@@ -132,7 +107,7 @@ func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
         _first_teacher : felt):
     ex_initializer(_tderc20_address, _players_registry, _workshop_id)
     dummy_token_address_storage.write(_dummy_token_address)
-    Teacher_accounts.write(_first_teacher, 1)
+    teacher_accounts.write(_first_teacher, 1)
     # Hard coded value for now
     max_rank_storage.write(100)
     return ()
@@ -725,65 +700,6 @@ end
 #
 # Internal functions
 #
-
-func assign_rank_to_player{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        sender_address : felt):
-    alloc_locals
-
-    # Reading next available slot
-    let (next_rank) = next_rank_storage.read()
-    # Assigning to user
-    assigned_rank_storage.write(sender_address, next_rank)
-
-    let new_next_rank = next_rank + 1
-    let (max_rank) = max_rank_storage.read()
-
-    # Checking if we reach max_rank
-    if new_next_rank == max_rank:
-        next_rank_storage.write(0)
-    else:
-        next_rank_storage.write(new_next_rank)
-    end
-    return ()
-end
-
-
-#
-# External functions - Administration
-# Only admins can call these. You don't need to understand them to finish the exercise.
-#
-
-@external
-func set_random_values{
-        syscall_ptr : felt*,
-        pedersen_ptr : HashBuiltin*,
-        range_check_ptr}(values_len : felt, values : felt*, column : felt):
-    only_teacher()
-    # Check that we fill max_ranK_storage cells
-    let (max_rank) = max_rank_storage.read()
-    assert values_len = max_rank
-    # Storing passed values in the store
-    set_a_random_value(values_len, values, column)
-    return ()
-end
-
-#
-# Internal functions - Administration
-# Only admins can call these. You don't need to understand them to finish the exercise.
-#
-
-func set_a_random_value{
-        syscall_ptr : felt*,
-        pedersen_ptr : HashBuiltin*,
-        range_check_ptr}(values_len : felt, values : felt*, column : felt):
-    if values_len == 0:
-        # Start with sum=0.
-        return ()
-    end
-    set_a_random_value(values_len=values_len - 1, values=values + 1, column=column)
-    random_attributes_storage.write(column, values_len-1, [values])
-    return ()
-end
 
 func test_get_tokens{
         syscall_ptr : felt*,

@@ -34,7 +34,23 @@ func workshop_id_storage() -> (workshop_id_storage : felt):
 end
 
 @storage_var
-func Teacher_accounts(account : felt) -> (balance : felt):
+func teacher_accounts(account : felt) -> (balance : felt):
+end
+
+@storage_var
+func max_rank_storage() -> (max_rank : felt):
+end
+
+@storage_var
+func next_rank_storage() -> (next_rank : felt):
+end
+
+@storage_var
+func random_attributes_storage(column : felt, rank : felt) -> (value : felt):
+end
+
+@storage_var
+func assigned_rank_storage(player_address :  felt) -> (rank : felt):
 end
 
 #
@@ -62,6 +78,20 @@ func has_validated_exercise{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     # Checking if the user already validated this exercise
     let (has_current_user_validated_exercise) = Iplayers_registry.has_validated_exercise(contract_address=_players_registry, account=account, workshop=_workshop_id, exercise = exercise_id)
     return (has_current_user_validated_exercise)
+end
+
+
+@view
+func next_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (next_rank : felt):
+    let (next_rank) = next_rank_storage.read()
+    return (next_rank)
+end
+
+@view
+func assigned_rank{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        player_address : felt) -> (rank : felt):
+    let (rank) = assigned_rank_storage.read(player_address)
+    return (rank)
 end
 
 #
@@ -145,7 +175,7 @@ func only_teacher{
         range_check_ptr
     }():
     let (caller) = get_caller_address()
-    let (permission) = Teacher_accounts.read(account=caller)
+    let (permission) = teacher_accounts.read(account=caller)
     assert permission = 1
     return ()
 end
@@ -157,7 +187,7 @@ func set_teacher{
         range_check_ptr
     }(account : felt, permission : felt):
     only_teacher()
-    Teacher_accounts.write(account, permission)
+    teacher_accounts.write(account, permission)
 
     return ()
 end
@@ -168,7 +198,65 @@ func is_teacher{
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
     }(account : felt) -> (permission : felt):
-    let (permission : felt) = Teacher_accounts.read(account)
+    let (permission : felt) = teacher_accounts.read(account)
     return (permission)
 end
 
+
+#
+# External functions - Administration
+# Only admins can call these. You don't need to understand them to finish the exercise.
+#
+
+@external
+func set_random_values{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr}(values_len : felt, values : felt*, column : felt):
+    only_teacher()
+    # Check that we fill max_ranK_storage cells
+    let (max_rank) = max_rank_storage.read()
+    assert values_len = max_rank
+    # Storing passed values in the store
+    set_a_random_value(values_len, values, column)
+    return ()
+end
+
+#
+# Internal functions - Administration
+# Only admins can call these. You don't need to understand them to finish the exercise.
+#
+
+func set_a_random_value{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr}(values_len : felt, values : felt*, column : felt):
+    if values_len == 0:
+        # Start with sum=0.
+        return ()
+    end
+    set_a_random_value(values_len=values_len - 1, values=values + 1, column=column)
+    random_attributes_storage.write(column, values_len-1, [values])
+    return ()
+end
+
+func assign_rank_to_player{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        sender_address : felt):
+    alloc_locals
+
+    # Reading next available slot
+    let (next_rank) = next_rank_storage.read()
+    # Assigning to user
+    assigned_rank_storage.write(sender_address, next_rank)
+
+    let new_next_rank = next_rank + 1
+    let (max_rank) = max_rank_storage.read()
+
+    # Checking if we reach max_rank
+    if new_next_rank == max_rank:
+        next_rank_storage.write(0)
+    else:
+        next_rank_storage.write(new_next_rank)
+    end
+    return ()
+end
