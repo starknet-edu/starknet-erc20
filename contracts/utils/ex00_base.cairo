@@ -22,15 +22,15 @@ from contracts.IERC20Solution import IERC20Solution
 #
 
 @storage_var
-func tderc20_address_storage() -> (tderc20_address_storage : felt):
+func tderc20_address_storage() -> (tderc20_address_address : felt):
 end
 
 @storage_var
-func players_registry_storage() -> (tderc20_address_storage : felt):
+func players_registry_storage() -> (players_registry_address : felt):
 end
 
 @storage_var
-func workshop_id_storage() -> (workshop_id_storage : felt):
+func workshop_id_storage() -> (workshop_id : felt):
 end
 
 @storage_var
@@ -55,7 +55,7 @@ end
 
 #
 # Declaring getters
-# Public variables should be declared explicitely with a getter
+# Public variables should be declared explicitly with a getter
 #
 
 @view
