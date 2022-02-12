@@ -77,7 +77,7 @@ end
 func read_ticker{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         player_address : felt) -> (ticker : felt):
     let (rank) = assigned_rank(player_address)
-    let (ticker) = random_attributes_storage.read(0, rank)
+    let (ticker) = random_attributes_storage.read(rank, 0)
     return (ticker)
 end
 
@@ -85,7 +85,7 @@ end
 func read_supply{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         player_address : felt) -> (supply : Uint256):
     let (rank) = assigned_rank(player_address)
-    let (supply_felt) = random_attributes_storage.read(1, rank)
+    let (supply_felt) = random_attributes_storage.read(rank, 1)
     let supply : Uint256 = Uint256(supply_felt, 0)
     return (supply)
 end
@@ -142,7 +142,7 @@ func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     let (expected_symbol) = read_ticker(sender_address)
 
     # Retrieve player's erc20 solution address
-    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address, part=1)
+    let (submitted_exercise_address) = player_exercise_solution_storage.read(player_address=sender_address, part=1)
 
     # Reading supply of submission address
     let (submission_supply) = IERC20.totalSupply(contract_address=submitted_exercise_address)
@@ -189,7 +189,7 @@ func ex3_test_get_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     alloc_locals
     # Reading addresses
     let (sender_address) = get_caller_address()
-    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address, part=1)
+    let (submitted_exercise_address) = player_exercise_solution_storage.read(player_address=sender_address, part=1)
 
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
     let (has_received_tokens, amount_received) = test_get_tokens(submitted_exercise_address)
@@ -207,7 +207,7 @@ func ex4_5_6_test_fencing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     # Reading addresses
     let (evaluator_address) = get_contract_address()
     let (sender_address) = get_caller_address()
-    let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address, part=1)
+    let (submitted_exercise_address) = player_exercise_solution_storage.read(player_address=sender_address, part=1)
 
     # Check that Evaluator is not allowed to get tokens
     let (allowlist_level_eval) = IERC20Solution.allowlist_level(
@@ -232,7 +232,7 @@ func ex4_5_6_test_fencing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     let (has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
     assert has_received_tokens = 1
 
-    # Distributing points the first time this exercise is completed until this point
+    # Distributing points the first time this exercise is completed
     # Implementing allow list view function
     validate_and_distribute_points_once(sender_address, 4, 1)
     # Implementing allow list management
@@ -610,7 +610,7 @@ func submit_erc20_solution{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     assert has_solution_been_submitted_before = 0
 
     # Assigning passed ERC20 as player ERC20
-    player_exercise_solution_storage.write(sender_address, erc20_address, 1)
+    player_exercise_solution_storage.write(player_address=sender_address, part=1, value=erc20_address)
     has_been_paired.write(erc20_address, 1)
 
     # Distributing points the first time this exercise is completed
@@ -629,7 +629,7 @@ func submit_exercise_solution{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
     assert has_solution_been_submitted_before = 0
 
     # Assigning passed ExerciseSolution to the player
-    player_exercise_solution_storage.write(sender_address, exercise_address, 2)
+    player_exercise_solution_storage.write(player_address=sender_address, part=2, value=exercise_address)
     has_been_paired.write(exercise_address, 1)
     return ()
 end

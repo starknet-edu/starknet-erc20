@@ -46,11 +46,11 @@ func next_rank_storage() -> (next_rank : felt):
 end
 
 @storage_var
-func random_attributes_storage(column : felt, rank : felt) -> (value : felt):
+func random_attributes_storage(rank : felt, column : felt) -> (value : felt):
 end
 
 @storage_var
-func assigned_rank_storage(player_address :  felt) -> (rank : felt):
+func assigned_rank_storage(player_address : felt) -> (rank : felt):
 end
 
 #
@@ -236,7 +236,7 @@ func set_a_random_value{
         return ()
     end
     set_a_random_value(values_len=values_len - 1, values=values + 1, column=column)
-    random_attributes_storage.write(column, values_len-1, [values])
+    random_attributes_storage.write(values_len - 1, column, [values])
     return ()
 end
 
