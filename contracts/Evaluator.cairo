@@ -565,7 +565,10 @@ func ex18_withdraw_and_burn{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
 
     ############### Actions
     # Allow ExerciseSolution to spend all evaluator's ExercisesSolutionTokens
-    IERC20.approve(submitted_exercise_token_address, evaluator_address, initial_est_balance_eval)
+    IERC20.approve(
+        contract_address=submitted_exercise_token_address,
+        spender=submitted_exercise_address,
+        amount=initial_est_balance_eval)
 
     # Withdrawing tokens deposited in previous exercise
     let (withdrawn_amount) = IExerciseSolution.withdraw_all_tokens(contract_address=submitted_exercise_address)
