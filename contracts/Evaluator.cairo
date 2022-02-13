@@ -366,7 +366,7 @@ func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
 
     ############### Initial state
     # Initial balance of ExerciseSolution that will be used to check that its balance decreased in this tx
-    let (initial_dtk_balance_submission) = IERC20.balanceOf(dummy_token_address, submitted_exercise_address)
+    let (initial_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
 
     # Initial balance of Evaluator
     let (initial_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
