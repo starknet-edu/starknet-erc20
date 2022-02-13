@@ -148,12 +148,16 @@ func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     let (submission_supply) = IERC20.totalSupply(contract_address=submitted_exercise_address)
     # Checking supply is correct
     let (is_equal) = uint256_eq(submission_supply, expected_supply)
-    assert  is_equal = 1
+    with_attr error_message("Supply does not match the assignement's request"):
+        assert  is_equal = 1
+    end
 
     # Reading symbol of submission address
     let (submission_symbol) = IERC20.symbol(contract_address=submitted_exercise_address)
-    # Checking symbol is correct
-    assert submission_symbol = expected_symbol
+    with_attr error_message("Ticker does not match the assignement's request"):
+        # Checking symbol is correct
+        assert submission_symbol = expected_symbol
+    end
     
     # Checking some ERC20 functions were created
     let (evaluator_address) = get_contract_address()
@@ -193,7 +197,10 @@ func ex3_test_get_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
     let (has_received_tokens, amount_received) = test_get_tokens(submitted_exercise_address)
-    assert has_received_tokens = 1
+
+    with_attr error_message("No tokens received"):
+        assert has_received_tokens = 1
+    end
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 3, 2)
@@ -212,25 +219,38 @@ func ex4_5_6_test_fencing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     # Check that Evaluator is not allowed to get tokens
     let (allowlist_level_eval) = IERC20Solution.allowlist_level(
         contract_address=submitted_exercise_address, account=evaluator_address)
-    assert allowlist_level_eval = 0
-
+    
+    with_attr error_message("Allowlist_level did not return 0 initially"):
+        assert allowlist_level_eval = 0
+    end
+    
     # Try to get token
     # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
     let (has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
+    
     # Checking that nothing happened
-    assert has_received_tokens = 0
-
+    with_attr error_message("It was possible to get tokens from the start"):
+        assert has_received_tokens = 0
+    end
+    
     # Get whitelisted by asking politely
     let (whitelisted) = IERC20Solution.request_allowlist(contract_address=submitted_exercise_address)
-    assert whitelisted = 1
+
+    with_attr error_message("request_allowlist did not return the correct value"):
+        assert whitelisted = 1
+    end
 
     # Check that Evaluator is whitelisted
     let (allowlist_level_eval) = IERC20Solution.allowlist_level(submitted_exercise_address, evaluator_address)
-    assert_not_zero(allowlist_level_eval)
-
+    with_attr error_message("Allowlist_level did not return the correct value"):
+        assert_not_zero(allowlist_level_eval)
+    end
     # Check that we can now get tokens
     let (has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
-    assert has_received_tokens = 1
+    
+    with_attr error_message("Got no tokens when I should have"):
+        assert has_received_tokens = 1
+    end
 
     # Distributing points the first time this exercise is completed
     # Implementing allow list view function
