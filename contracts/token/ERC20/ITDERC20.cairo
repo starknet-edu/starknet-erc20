@@ -1,7 +1,6 @@
 %lang starknet
 
-from starkware.cairo.common.uint256 import (
-    Uint256, uint256_add, uint256_sub, uint256_le, uint256_lt, uint256_check)
+from starkware.cairo.common.uint256 import Uint256
 
 @contract_interface
 namespace ITDERC20:
