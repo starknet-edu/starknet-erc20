@@ -83,7 +83,7 @@ The total amount of points to collect from completing all exercises up to this p
 - Call `ex7_8_9_test_fencing_levels()` in the evaluator to show
   - It can't get tokens using `get_tokens()` (1 pt)
   - It can call `request_allowlist_level(1)` , then call `get_tokens()` and get N tokens (2 pt)
-  - It can call `request_allowlist_level(2)` , then call `get_tokens()` and get 2N tokens (2 pt)
+  - It can call `request_allowlist_level(2)` , then call `get_tokens()` and get > N tokens (2 pt)
 
 The total amount of points to collect from completing all exercises up to this point is : 19 points
 
