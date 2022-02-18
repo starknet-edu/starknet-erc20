@@ -189,7 +189,8 @@ func ex3_test_get_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     let (sender_address) = get_caller_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(player_address=sender_address, part=1)
 
-    # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
+    # test_get_tokens includes a check that the amount returned effectively matches the difference in the evaluator's
+    # balance.  See its implementation at the bottom of this file.
     let (has_received_tokens, amount_received) = test_get_tokens(submitted_exercise_address)
 
     with_attr error_message("No tokens received"):
@@ -218,8 +219,7 @@ func ex4_5_6_test_fencing{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
         assert allowlist_level_eval = 0
     end
     
-    # Try to get token
-    # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
+    # Try to get token. We use `_` to show that we do not intend to use the second returned value.
     let (has_received_tokens, _) = test_get_tokens(submitted_exercise_address)
     
     # Checking that nothing happened
