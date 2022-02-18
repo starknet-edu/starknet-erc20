@@ -162,25 +162,19 @@ func ex2_test_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     # Checking some ERC20 functions were created
     let (evaluator_address) = get_contract_address()
     let (balance) = IERC20.balanceOf(contract_address=submitted_exercise_address, account=evaluator_address)
-    let (initial_allowance) = IERC20.allowance(
-        contract_address=submitted_exercise_address, owner=evaluator_address, spender=sender_address)
 
     # 10 tokens
     let ten_tokens_uint256 : Uint256 = Uint256(10 * 1000000000000000000, 0)
+    # Check that the Evaluator can approve the spender to transfer ten tokens
     IERC20.approve(contract_address=submitted_exercise_address, spender=sender_address, amount=ten_tokens_uint256)
 
-    # Check that the allowance did raise by 10
-    let (final_allowance) = IERC20.allowance(
+    # Check that the allowance is now 10
+    let (allowance) = IERC20.allowance(
         contract_address=submitted_exercise_address, owner=evaluator_address, spender=sender_address)
 
-    # While we can assert that two felts are equal with `assert a = b`, it is a little longer for uint256:
-    let (difference) = uint256_sub(final_allowance, initial_allowance)
-    let (is_equal) = uint256_eq(difference, ten_tokens_uint256)
+    # Assertions with Uint256 require a little more verbosity. We'll see more about that later on.
+    let (is_equal) = uint256_eq(allowance, ten_tokens_uint256)
     assert is_equal = 1
-
-    # The next line does the same in one line, we'll rather use that later on.
-    # It is defined in `contracts/lib/SKNTD.cairo` with similar ones to assert equality, positivity, etc.
-    SKNTD_assert_uint256_difference(after=final_allowance, before=initial_allowance, expected_difference=ten_tokens_uint256)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 2, 2)
@@ -271,7 +265,7 @@ func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (sender_address) = get_caller_address()
     let (submitted_exercise_address) = player_exercise_solution_storage.read(sender_address, part=1)
 
-    # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
+    # Check that we are initially not allowed to get tokens.
     let (has_received, _) = test_get_tokens(submitted_exercise_address)
     assert has_received = 0
 
@@ -283,7 +277,7 @@ func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (allowlist_level_eval) = IERC20Solution.allowlist_level(submitted_exercise_address, evaluator_address)
     assert allowlist_level_eval = 1
 
-    # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
+    # Check that we received tokens, and retrieve how much
     let (has_received, first_amount_received) = test_get_tokens(submitted_exercise_address)
     assert has_received = 1
 
@@ -295,11 +289,23 @@ func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (allowlist_level_eval) = IERC20Solution.allowlist_level(submitted_exercise_address, evaluator_address)
     assert allowlist_level_eval = 2
 
-    # test_get_tokens verifies that the amount returned effectively matches the difference in the evaluator's balance.
+    # Check that we received tokens, and retrieve how much
     let (has_received, second_amount_received) = test_get_tokens(submitted_exercise_address)
     assert has_received = 1
 
     # Check that we received more with level 2 than with level 1
+    let (is_larger) = uint256_lt(first_amount_received, second_amount_received)
+    assert is_larger = 1
+
+    # Now is a good time to introduce a few functions made for this tutorial.
+    # While we can assert in cairo that a felt is smaller than another with `assert_lt(a, b)`,
+    # it is a little longer for uint256. We've had to use this structure above in two lines of
+    # code since the earlier exercises to compare Uint256 values.
+
+    # The next line does the same and we'll rather use that for improved readability later on.
+    # It is defined in `contracts/lib/SKNTD.cairo` with similar ones to assert equality,
+    # positivity, etc. SKNTD is the library name, used to prevent name clashes, as described in
+    # https://github.com/OpenZeppelin/cairo-contracts/blob/main/docs/Extensibility.md
     SKNTD_assert_uint256_lt(first_amount_received, second_amount_received)
 
     # Distributing points the first time this exercise is completed
