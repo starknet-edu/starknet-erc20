@@ -40,8 +40,8 @@ Today you will deploy your own ERC20 token on StarkNet!
 
 ### Setting up
 
-- Create a git repository and share it with the teacher
-- Set up your environment (2 pts).
+- Create a git repository and share it with the teacher.
+- Set up your environment (2 pts). Note that it requires Python 3.7+.
 These points will be attributed manually if you do not manage to have your contract interact with the evaluator, or automatically in the first question.
 
 ## Part 1
