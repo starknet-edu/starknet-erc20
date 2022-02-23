@@ -6,13 +6,18 @@ THIS TUTORIAL IS STILL UNDER DEVELOPMENT. YOU CAN START WORKING ON IT, BUT YOUR 
 
 ## Introduction
 
-Welcome! This is an automated workshop that will explain how to deploy an ERC20 token on StarkNet and customize it to perform specific functions.
+Welcome! This is an automated workshop that will explain how to deploy an ERC20 token on StarkNet and customize it to perform specific functions. The ERC20 standard is described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20)
 It is aimed at developers that:
 
 - Understand Cairo syntax
 - Understand the ERC20 token standard
 
+​
 This workshop is the third in a series that will cover broad smart contract concepts (writing and deploying ERC20/ERC721, bridging assets, L1 <-> L2 messaging...).
+You can find the previous tutorials here:
+
+- [Introduction to cairo]((https://github.com/l-henri/starknet-cairo-101))
+- [ERC721](https://github.com/l-henri/starknet-erc721)
 Interested in helping writing those? [Reach out](https://twitter.com/HenriLieutaud)!
 
 ### Disclaimer
@@ -25,14 +30,145 @@ StarkNet is still in Alpha. This means that development is ongoing, and the pain
 
 Once you are done working on this tutorial, your feedback would be greatly appreciated!
 **Please fill [this form](https://forms.reform.app/starkware/untitled-form-4/kaes2e) to let us know what we can do to make it better.**
-
+​
 And if you struggle to move forward, do let us know! This workshop is meant to be as accessible as possible; we want to know if it's not the case.
 
 Do you have a question? Join our [Discord server](https://discord.gg/YHz7drT3), register and join channel #tutorials-support
 
+## Table of contents
+
+- [ERC20 on StarkNet](#erc20-on-starknet)
+  - [Introduction](#introduction)
+    - [Disclaimer](#disclaimer)
+    - [Providing feedback](#providing-feedback)
+  - [Table of contents](#table-of-contents)
+  - [How to work on this TD](#how-to-work-on-this-td)
+    - [Before you start](#before-you-start)
+    - [Workflow](#workflow)
+    - [Checking your progress](#checking-your-progress)
+      - [Counting your points](#counting-your-points)
+      - [Transaction status](#transaction-status)
+      - [Install nile](#install-nile)
+        - [With pip](#with-pip)
+        - [With docker](#with-docker)
+    - [Getting to work](#getting-to-work)
+  - [Contract addresses](#contract-addresses)
+  - [Points list](#points-list)
+    - [Setting up](#setting-up)
+  - [Part 1](#part-1)
+    - [ERC20 basics](#erc20-basics)
+      - [Exercise 1](#exercise-1)
+      - [Exercise 2](#exercise-2)
+    - [Distributing tokens](#distributing-tokens)
+      - [Exercise 3](#exercise-3)
+    - [Creating an ICO allow list](#creating-an-ico-allow-list)
+      - [Exercises 4, 5 and 6](#exercises-4-5-and-6)
+    - [Creating multi tier allow list](#creating-multi-tier-allow-list)
+      - [Exercises 7, 8 and 9](#exercises-7-8-and-9)
+  - [Part 2](#part-2)
+    - [Submissions](#submissions)
+    - [Manipulating ERC20 tokens from other contracts](#manipulating-erc20-tokens-from-other-contracts)
+      - [Exercise 10](#exercise-10)
+    - [Calling another contract from your contract](#calling-another-contract-from-your-contract)
+      - [Exercise 11](#exercise-11)
+      - [Exercise 12](#exercise-12)
+    - [Approve and transferFrom](#approve-and-transferfrom)
+      - [Exercise 13](#exercise-13)
+      - [Exercise 14](#exercise-14)
+      - [Exercise 15](#exercise-15)
+    - [Tracking user deposits with a deposit wrapper ERC20](#tracking-user-deposits-with-a-deposit-wrapper-erc20)
+      - [Exercise 16 and 17](#exercise-16-and-17)
+      - [Exercise 18](#exercise-18)
+
 ## How to work on this TD
 
-Will update, simple copy from ERC721 should work
+### Before you start
+
+The tutorial has three components:
+
+- An [ERC20 token](contracts/token/ERC20/TDERC20.cairo), ticker ERC20-101, that is used to keep track of points
+- An [evaluator contract](contracts/Evaluator.cairo), that is able to mint and distribute ERC20-101 points
+- A second [ERC20 token](contracts/token/ERC20/dummy_token.cairo), ticker DTK, that is used to make fake payments
+
+### Workflow
+
+To do this tutorial you will have to interact with the `Evaluator.cairo` contract. To do an exercise you will have to use the `submit_exercise` function to tell the evaluator the address of the evaluated contract. Once it's done you can call the evaluator for it to correct the desired exericse.
+For example to solve the first exercise the workflow would be the following:
+
+`deploy a smart contract that answers ex2` &rarr; `call submit_erc20_solution on the evaluator providing your smart contract address` &rarr; `call ex2_test_erc20 on the evaluator contract`
+
+Your objective is to gather as many ERC20-101 points as possible. Please note :
+
+- The 'transfer' function of ERC20-101 has been disabled to encourage you to finish the tutorial with only one address
+- In order to receive points, you will have to reach the calls to the  `distribute_point` function.
+- This repo contains an interface `IExerciceSolution.cairo`. Your ERC20 contract will have to conform to this interface in order to validate the exercise; that is, your contract needs to implement all the functions described in `IExerciceSolution.cairo`.
+- **We really recommend that your read the [`Evaluator.cairo`](contracts/Evaluator.cairo) contract in order to fully understand what's expected for each exercise**. A high level description of what is expected for each exercise is provided in this readme.
+- The Evaluator contract sometimes needs to make payments to buy your tokens. Make sure he has enough dummy tokens to do so! If not, you should get dummy tokens from the dummy tokens contract and send them to the evaluator
+
+### Checking your progress
+
+#### Counting your points
+
+​
+Your points will get credited in Argent X; though this may take some time. If you want to monitor your points count in real time, you can also see your balance in voyager!
+​
+
+- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/) **LINK TO THE ERC20 TUTORIAL CONTRACT** in voyager, in the "read contract" tab
+- Enter your address in decimal in the "balanceOf" function
+
+You can also check your overall progress [here](https://tutohenri.surge.sh)
+
+#### Transaction status
+
+​
+You sent a transaction, and it is shown as "undetected" in voyager? This can mean two things:
+​
+
+- Your transaction is pending, and will be included in a block shortly. It will then be visible in voyager.
+- Your transaction was invalid, and will NOT be included in a block (there is no such thing as a failed transaction in StarkNet).
+​
+You can (and should) check the status of your transaction with the following URL  [https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=](https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=)  , where you can append your transaction hash.
+
+#### Install nile
+
+##### With pip
+
+- Set up the environment following [these instructions](https://starknet.io/docs/quickstart.html#quickstart)
+- Install [Nile](https://github.com/OpenZeppelin/nile).
+
+##### With docker
+
+- Linux and macos
+
+```bash
+alias nile='docker run --rm -v "$PWD":"$PWD" -w "$PWD" lucaslvy/nile:0.7.1'
+```
+
+- Windows
+
+```bash
+docker run --rm -it -v ${pwd}:/work --workdir /work lucaslvy/nile:0.7.1
+```
+
+### Getting to work
+
+- Clone the repo on your machine
+- Test that you are able to compile the project
+
+```bash
+nile compile
+```
+
+- To convert data to felt use the [`utils.py`](utils.py) script
+
+## Contract addresses
+
+**PUT THE ADDRESSES AND THE LINKS**
+| Contract code                                                | Contract on voyager                         |
+| ------------------------------------------------------------ | ------------------------------------------- |
+| [Points counter ERC20](contracts/token/ERC20/TDERC20.cairo)  | [](https://goerli.voyager.online/contract/) |
+| [Evaluator](contracts/Evaluator.cairo)                       | [](https://goerli.voyager.online/contract/) |
+| [Dummy ERC20 token](contracts/token/ERC20/dummy_token.cairo) | [](https://goerli.voyager.online/contract/) |
 
 ## Points list
 
@@ -48,22 +184,32 @@ These points will be attributed manually if you do not manage to have your contr
 
 ### ERC20 basics
 
-- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in `Evaluator.cairo` by calling getters `read_ticker()` and `read_supply()`
-- Create an ERC20 token contract with the proper ticker and supply (2 pt)
+#### Exercise 1
+
+- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in **LINK TO THE EVALUATOR CONTRACT** [`Evaluator.cairo`](https://goerli.voyager.online/contract/) by calling getters `read_ticker()` and `read_supply()`
+
+- Create an ERC20 token contract with the proper ticker and supply (2 pts)
 - Deploy it to the Goerli-alpha testnet (1 pts)
-- Call `submit_erc20_solution()` in the Evaluator to configure the contract you want evaluated (Previous 5 points are attributed at that step)
+- Call `submit_erc20_solution()` in the Evaluator to configure the contract you want evaluated (2pts) (Previous 3 points for the ERC20 and the deployment are also attributed at that step)
+
+#### Exercise 2
+
 - Call `ex2_test_erc20()` in the evaluator to check ticker and supply and receive your points (2 pts)
 
 The total amount of points to collect from completing all exercises up to this point is : 8 points
 
 ### Distributing tokens
 
-- Create a `get_tokens()` function in your contract, deploy it, and call the `ex3_test_get_token()` function that distributes token to the caller (2 pts).
+#### Exercise 3
+
+- Create a `get_tokens()` function in your contract, deploy it, and call the `ex3_test_get_token()` function that distributes tokens to the caller (2 pts).
 - `get_tokens()` should return the amount of token distributed
 
 The total amount of points to collect from completing all exercises up to this point is : 10 points
 
 ### Creating an ICO allow list
+
+#### Exercises 4, 5 and 6
 
 - Create a customer allow listing function. Only allow listed users should be able to call `get_tokens()`.
 - Create a function `request_allowlist()` that the evaluator will call during the exercise check to be allowed to get tokens.
@@ -77,7 +223,9 @@ The total amount of points to collect from completing all exercises up to this p
 
 ### Creating multi tier allow list
 
-- Create a customer multi tier listing function. Only allow listed users should be able to call `get_token()`; and customers should receive a different amount of token based on their level
+#### Exercises 7, 8 and 9
+
+- Create a customer multi tier listing function. Only allow listed users should be able to call `get_token()`; and customers should receive a different amount of tokens based on their level
 - Create a function `request_allowlist_level()` that the evaluator will call during the exercise check to be allowed to get tokens at a certain tier level
 - Modify the function `allowlist_level()` so that it returns the allowed level of accounts.
 - Call `ex7_8_9_test_fencing_levels()` in the evaluator to show
@@ -95,6 +243,8 @@ Submissions for this part are given by calling `submit_exercise_solution()` in t
 
 ### Manipulating ERC20 tokens from other contracts
 
+#### Exercise 10
+
 - Manually claim tokens on the predeployed claimable ERC20 (DTK-20 tokens) (1 pts)
 - Claim your points by calling `ex10_claimed_tokens()` in the evaluator (1 pts)
 
@@ -102,36 +252,49 @@ The total amount of points to collect from completing all exercises up to this p
 
 ### Calling another contract from your contract
 
-- Create a contract `ExerciseSolution` that can claim DTK-20 tokens. Keep track of addresses who claimed tokens through `ExerciseSolution` , and how much. This amount should be visible by calling `tokens_in_custody()` on `ExerciseSolution`.
+#### Exercise 11
+
+- Create a contract `ExerciseSolution` that can claim DTK-20 tokens. Keep track of addresses who claimed tokens through `ExerciseSolution` , and how much. This amount should be visible by calling `tokens_in_custody` on `ExerciseSolution`
 - Deploy ExerciseSolution and submit it to the evaluator with `submit_exercise_solution()`.
 - Call `ex11_claimed_from_contract()` in the evaluator to prove your code works (3 pts)
-- Create a function `withdraw_all_tokens()` in `ExerciseSolution` to withdraw the claimed tokens from the `ExerciseSolution` to the address that initially claimed them.
+
+#### Exercise 12
+
+- Create a function `withdraw_all_tokens()` in `ExerciseSolution` to withdraw the claimed tokens from the `ExerciseSolution` to the address that initially claimed them
 - Call `ex12_withdraw_from_contract()` in the evaluator to prove your code works (2 pts)
 
 The total amount of points to collect from completing all exercises up to this point is : 26 points
 
 ### Approve and transferFrom
 
+#### Exercise 13
+
 - Use ERC20 function to allow your contract to manipulate your DTKs. Call `ex13_approved_exercise_solution()` to claim points (1 pts)
+
+#### Exercise 14
+
 - Use ERC20 to revoke this authorization. Call `ex14_revoked_exercise_solution()` to claim points (1 pts)
-- Create a function `deposit_tokens()` through which a user can deposit DTKs in ExerciseSolution, using `transferFrom()`
+
+#### Exercise 15
+
+- Create a function `deposit_tokens()` through which a user can deposit DTKs in ExerciseSolution, using `transferFrom`
 - Call `ex15_deposit_tokens` in the evaluator to prove your code works (2 pts)
 
 The total amount of points to collect from completing all exercises up to this point is : 30 points
 
 ### Tracking user deposits with a deposit wrapper ERC20
 
+#### Exercise 16 and 17
+
 - Create and deploy a new ERC20 `ExerciseSolutionToken` to track user deposit. This ERC20 should be mintable and mint authorization given to ExerciseSolution.
 - Deploy `ExerciseSolutionToken` and make sure that `ExerciseSolution` knows its address.
 - Update the deposit function on `ExerciseSolution` so that user balances are tokenized. When a deposit is made in `ExerciseSolution`, tokens are minted in `ExerciseSolutionToken` and transferred to the address depositing.
 - Call `ex16_17_deposit_and_mint` in the evaluator to prove your code works (4 pts)
+
+#### Exercise 18
+
 - Update the `ExerciseSolution` withdraw function so that it uses `transferFrom()` in `ExerciseSolutionToken`, burns these tokens, and returns the DTKs.
 - Call `ex18_withdraw_and_burn` in the evaluator to prove your code works (2 pts)
 
 The total amount of points to collect from completing all exercises up to this point is : 36 points
-
-## Exercises & Contract addresses
-
-To be updated after deployment
-​
 ​
