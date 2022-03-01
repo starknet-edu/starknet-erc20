@@ -22,15 +22,15 @@ from contracts.IERC20Solution import IERC20Solution
 #
 
 @storage_var
-func tderc20_address_storage() -> (tderc20_address_storage : felt):
+func tderc20_address_storage() -> (tderc20_address_address : felt):
 end
 
 @storage_var
-func players_registry_storage() -> (tderc20_address_storage : felt):
+func players_registry_storage() -> (players_registry_address : felt):
 end
 
 @storage_var
-func workshop_id_storage() -> (workshop_id_storage : felt):
+func workshop_id_storage() -> (workshop_id : felt):
 end
 
 @storage_var
@@ -46,16 +46,16 @@ func next_rank_storage() -> (next_rank : felt):
 end
 
 @storage_var
-func random_attributes_storage(column : felt, rank : felt) -> (value : felt):
+func random_attributes_storage(rank : felt, column : felt) -> (value : felt):
 end
 
 @storage_var
-func assigned_rank_storage(player_address :  felt) -> (rank : felt):
+func assigned_rank_storage(player_address : felt) -> (rank : felt):
 end
 
 #
 # Declaring getters
-# Public variables should be declared explicitely with a getter
+# Public variables should be declared explicitly with a getter
 #
 
 @view
@@ -236,7 +236,7 @@ func set_a_random_value{
         return ()
     end
     set_a_random_value(values_len=values_len - 1, values=values + 1, column=column)
-    random_attributes_storage.write(column, values_len-1, [values])
+    random_attributes_storage.write(values_len - 1, column, [values])
     return ()
 end
 
