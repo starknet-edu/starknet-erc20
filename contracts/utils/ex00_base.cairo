@@ -13,7 +13,7 @@ from starkware.starknet.common.syscalls import (get_contract_address, get_caller
 from contracts.token.ERC20.IERC20 import IERC20
 from contracts.token.ERC20.ITDERC20 import ITDERC20
 from contracts.utils.Iplayers_registry import Iplayers_registry
-from contracts.lib.SKNTD import SKNTD_assert_uint256_difference
+from contracts.lib.UTILS import UTILS_assert_uint256_difference
 from contracts.IERC20Solution import IERC20Solution
 
 #

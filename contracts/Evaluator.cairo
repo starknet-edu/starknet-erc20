@@ -12,9 +12,9 @@ from starkware.cairo.common.uint256 import (
     Uint256, uint256_add, uint256_sub, uint256_mul, uint256_le, uint256_lt, uint256_check, uint256_eq, uint256_neg
 )
 
-from contracts.lib.SKNTD import (
-    SKNTD_assert_uint256_difference, SKNTD_assert_uint256_eq, SKNTD_assert_uint256_le,
-    SKNTD_assert_uint256_strictly_positive, SKNTD_assert_uint256_zero, SKNTD_assert_uint256_lt
+from contracts.lib.UTILS import (
+    UTILS_assert_uint256_difference, UTILS_assert_uint256_eq, UTILS_assert_uint256_le,
+    UTILS_assert_uint256_strictly_positive, UTILS_assert_uint256_zero, UTILS_assert_uint256_lt
 )
 
 from contracts.utils.ex00_base import (
@@ -303,10 +303,10 @@ func ex7_8_9_test_fencing_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     # code since the earlier exercises to compare Uint256 values.
 
     # The next line does the same and we'll rather use that for improved readability later on.
-    # It is defined in `contracts/lib/SKNTD.cairo` with similar ones to assert equality,
-    # positivity, etc. SKNTD is the library name, used to prevent name clashes, as described in
+    # It is defined in `contracts/lib/UTILS.cairo` with similar ones to assert equality,
+    # positivity, etc. UTILS is the library name, used to prevent name clashes, as described in
     # https://github.com/OpenZeppelin/cairo-contracts/blob/main/docs/Extensibility.md
-    SKNTD_assert_uint256_lt(first_amount_received, second_amount_received)
+    UTILS_assert_uint256_lt(first_amount_received, second_amount_received)
 
     # Distributing points the first time this exercise is completed
     # Denying claiming to non allowed contracts
@@ -332,7 +332,7 @@ func ex10_claimed_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     let (dummy_token_balance) = IERC20.balanceOf(contract_address=read_dtk_address, account=sender_address)
 
     # Checking that the sender's dummy token balance is positive
-    SKNTD_assert_uint256_strictly_positive(dummy_token_balance)
+    UTILS_assert_uint256_strictly_positive(dummy_token_balance)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 10, 2)
@@ -359,20 +359,20 @@ func ex11_claimed_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     let (claimed_amount) = IExerciseSolution.get_tokens_from_contract(submitted_exercise_address)
 
     # Checking that the amount returned is positive
-    SKNTD_assert_uint256_strictly_positive(claimed_amount)
+    UTILS_assert_uint256_strictly_positive(claimed_amount)
 
     # Checking that the amount in custody increased
     let (final_dtk_custody) = IExerciseSolution.tokens_in_custody(
         contract_address=submitted_exercise_address, account=evaluator_address)
     let (custody_difference) = uint256_sub(final_dtk_custody, initial_dtk_custody)
-    SKNTD_assert_uint256_strictly_positive(custody_difference)
+    UTILS_assert_uint256_strictly_positive(custody_difference)
 
     # Checking that the amount returned is the same as the custody balance increase
-    SKNTD_assert_uint256_eq(custody_difference, claimed_amount)
+    UTILS_assert_uint256_eq(custody_difference, claimed_amount)
 
     # Finally, checking that the balance of ExerciseSolution was also increased by the same amount
     let (final_solution_dtk_balance) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
-    SKNTD_assert_uint256_difference(
+    UTILS_assert_uint256_difference(
         final_solution_dtk_balance, initial_solution_dtk_balance, custody_difference)
 
     # Distributing points the first time this exercise is completed
@@ -406,23 +406,23 @@ func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     let (withdrawn_amount) = IExerciseSolution.withdraw_all_tokens(contract_address=submitted_exercise_address)
 
     # Checking that the amount is equal to the total evaluator balance in custody
-    SKNTD_assert_uint256_eq(withdrawn_amount, initial_dtk_custody)
+    UTILS_assert_uint256_eq(withdrawn_amount, initial_dtk_custody)
 
     ############### Balances checks
     # Checking that the evaluator's balance is now increased by `withdrawn_amount`
     let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
-    SKNTD_assert_uint256_difference(final_dtk_balance_eval, initial_dtk_balance_eval, withdrawn_amount)
+    UTILS_assert_uint256_difference(final_dtk_balance_eval, initial_dtk_balance_eval, withdrawn_amount)
 
     # Checking that the balance of ExerciseSolution was also decreased by the same amount
     let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
-    SKNTD_assert_uint256_difference(
+    UTILS_assert_uint256_difference(
         initial_dtk_balance_submission, final_dtk_balance_submission, withdrawn_amount)
 
     ############### Custody checks
     # And finally checking that the amount in custody was decreased by same amount
     let (final_dtk_custody) = IExerciseSolution.tokens_in_custody(
         contract_address=submitted_exercise_address, account=evaluator_address)
-    SKNTD_assert_uint256_difference(initial_dtk_custody, final_dtk_custody, withdrawn_amount)
+    UTILS_assert_uint256_difference(initial_dtk_custody, final_dtk_custody, withdrawn_amount)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 12, 2)
@@ -440,7 +440,7 @@ func ex13_approved_exercise_solution{syscall_ptr : felt*, pedersen_ptr : HashBui
     # Check the dummy token allowance of ExerciseSolution
     let (submission_dtk_allowance) = IERC20.allowance(
         contract_address=read_dtk_address, owner=sender_address, spender=submitted_exercise_address)
-    SKNTD_assert_uint256_strictly_positive(submission_dtk_allowance)
+    UTILS_assert_uint256_strictly_positive(submission_dtk_allowance)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 13, 1)
@@ -459,7 +459,7 @@ func ex14_revoked_exercise_solution{syscall_ptr : felt*, pedersen_ptr : HashBuil
     # Check the dummy token allowance of ExerciseSolution is zero
     let (submission_dtk_allowance) = IERC20.allowance(
         contract_address=read_dtk_address, owner=sender_address, spender=submitted_exercise_address)
-    SKNTD_assert_uint256_zero(submission_dtk_allowance)
+    UTILS_assert_uint256_zero(submission_dtk_allowance)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 14, 1)
@@ -497,18 +497,18 @@ func ex15_deposit_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     ############### Balances check
     # Check that ExerciseSolution's balance of DTK also increased by ten tokens
     let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
-    SKNTD_assert_uint256_difference(
+    UTILS_assert_uint256_difference(
         final_dtk_balance_submission, initial_dtk_balance_submission, ten_tokens_uint256)
 
     # Check that Evaluator's balance of DTK decreased by ten tokens
     let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
-    SKNTD_assert_uint256_difference(
+    UTILS_assert_uint256_difference(
         initial_dtk_balance_eval, final_dtk_balance_eval, ten_tokens_uint256)
 
     ############### Custody check
     # Check that the custody balance did increase by ten tokens
     let (final_dtk_custody) = IExerciseSolution.tokens_in_custody(submitted_exercise_address, evaluator_address)
-    SKNTD_assert_uint256_difference(final_dtk_custody, initial_dtk_custody, ten_tokens_uint256)
+    UTILS_assert_uint256_difference(final_dtk_custody, initial_dtk_custody, ten_tokens_uint256)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 15, 2)
@@ -545,12 +545,12 @@ func ex16_17_deposit_and_mint{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
     ############### Balances checks
     # Check that ExerciseSolution's balance of DTK also increased by ten tokens
     let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
-    SKNTD_assert_uint256_difference(
+    UTILS_assert_uint256_difference(
         final_dtk_balance_submission, initial_dtk_balance_submission, ten_tokens_uint256)
 
     # Check that Evaluator's balance of DTK decreased by ten tokens
     let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
-    SKNTD_assert_uint256_difference(
+    UTILS_assert_uint256_difference(
         initial_dtk_balance_eval, final_dtk_balance_eval, ten_tokens_uint256)
 
     ############### ExerciseSolutionToken checks
@@ -559,7 +559,7 @@ func ex16_17_deposit_and_mint{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
 
     # Check that evaluator's balance increased by the minted amount
     let (final_est_balance_eval) = IERC20.balanceOf(submitted_exercise_token_address, evaluator_address)
-    SKNTD_assert_uint256_difference(final_est_balance_eval, initial_est_balance_eval, minted_tokens)
+    UTILS_assert_uint256_difference(final_est_balance_eval, initial_est_balance_eval, minted_tokens)
 
     # Distributing points the first time this exercise is completed
     # Create and link ERC20
@@ -600,16 +600,16 @@ func ex18_withdraw_and_burn{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (withdrawn_amount) = IExerciseSolution.withdraw_all_tokens(contract_address=submitted_exercise_address)
 
     # Checking that some money was withdrawn
-    SKNTD_assert_uint256_strictly_positive(withdrawn_amount)
+    UTILS_assert_uint256_strictly_positive(withdrawn_amount)
 
     ############### Balances checks
     # Checking that the evaluator's balance is now increased by `withdrawn_amount`
     let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
-    SKNTD_assert_uint256_difference(final_dtk_balance_eval, initial_dtk_balance_eval, withdrawn_amount)
+    UTILS_assert_uint256_difference(final_dtk_balance_eval, initial_dtk_balance_eval, withdrawn_amount)
 
     # Checking that the balance of ExerciseSolution was also decreased by the same amount
     let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
-    SKNTD_assert_uint256_difference(
+    UTILS_assert_uint256_difference(
         initial_dtk_balance_submission, final_dtk_balance_submission, withdrawn_amount)
 
     ############### ExerciseSolutionToken checks
@@ -618,7 +618,7 @@ func ex18_withdraw_and_burn{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
 
     # Check that evaluator's balance decreased by the burned amount
     let (final_est_balance_eval) = IERC20.balanceOf(submitted_exercise_token_address, evaluator_address)
-    SKNTD_assert_uint256_difference(initial_est_balance_eval, final_est_balance_eval, burned_amount)
+    UTILS_assert_uint256_difference(initial_est_balance_eval, final_est_balance_eval, burned_amount)
 
     # Distributing points the first time this exercise is completed
     validate_and_distribute_points_once(sender_address, 18, 2)
@@ -692,7 +692,7 @@ func test_get_tokens{
 
     # Checking that current balance is initial_balance + amount_received (even if 0)
     let (final_balance) = IERC20.balanceOf(contract_address=tested_contract, account=evaluator_address)
-    SKNTD_assert_uint256_difference(final_balance, initial_balance, amount_received)
+    UTILS_assert_uint256_difference(final_balance, initial_balance, amount_received)
 
     return (has_received_tokens, amount_received)
 end
