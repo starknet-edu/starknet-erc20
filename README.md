@@ -118,7 +118,7 @@ Your objective is to gather as many ERC20-101 points as possible. Please note :
 
 Your points will get credited in Argent X; though this may take some time. If you want to monitor your points count in real time, you can also see your balance in voyager!
 
-- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/) **TODO: LINK TO THE ERC20 TUTORIAL CONTRACT** in voyager, in the "read contract" tab
+- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/0x056a478b341acf8ea1714d6fd4fbc5c6af5c7ffcf07e58186a11fd0ea2946185) in voyager, in the "read contract" tab
 - Enter your address in decimal in the "balanceOf" function
 
 You can also check your overall progress [here](https://tutohenri.surge.sh)
@@ -166,13 +166,11 @@ nile compile
 
 ## Contract addresses
 
-**TODO: PUT THE ADDRESSES AND THE LINKS**
-
 | Contract code                                                | Contract on voyager                         |
 | ------------------------------------------------------------ | ------------------------------------------- |
-| [Points counter ERC20](contracts/token/ERC20/TDERC20.cairo)  | [](https://goerli.voyager.online/contract/) |
-| [Evaluator](contracts/Evaluator.cairo)                       | [](https://goerli.voyager.online/contract/) |
-| [Dummy ERC20 token](contracts/token/ERC20/dummy_token.cairo) | [](https://goerli.voyager.online/contract/) |
+| [Points counter ERC20](contracts/token/ERC20/TDERC20.cairo)  | [0x056a478b341acf8ea1714d6fd4fbc5c6af5c7ffcf07e58186a11fd0ea2946185](https://goerli.voyager.online/contract/0x056a478b341acf8ea1714d6fd4fbc5c6af5c7ffcf07e58186a11fd0ea2946185) |
+| [Evaluator](contracts/Evaluator.cairo)                       | [0x0076e51f26ecd07fb5a23fefd92987c1b6f19784407434080aa02bf7ebd3138b](https://goerli.voyager.online/contract/0x0076e51f26ecd07fb5a23fefd92987c1b6f19784407434080aa02bf7ebd3138b) |
+| [Dummy ERC20 token](contracts/token/ERC20/dummy_token.cairo) | [0x0596ae0cc42fdf8434526584bd6f13389e3e975839efd4214f84f0262f7e3d9b](https://goerli.voyager.online/contract/0x0596ae0cc42fdf8434526584bd6f13389e3e975839efd4214f84f0262f7e3d9b) |
 
 ## Points list
 
@@ -190,7 +188,7 @@ These points will be attributed manually if you do not manage to have your contr
 
 #### Exercise 1
 
-- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in **TODO: LINK TO THE EVALUATOR CONTRACT** [`Evaluator.cairo`](https://goerli.voyager.online/contract/) by calling getters `read_ticker()` and `read_supply()`
+- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in [`Evaluator.cairo`](https://goerli.voyager.online/contract/0x0076e51f26ecd07fb5a23fefd92987c1b6f19784407434080aa02bf7ebd3138b) by calling getters `read_ticker()` and `read_supply()`
 
 - Create an ERC20 token contract with the proper ticker and supply (2 pts)
 - Deploy it to the Goerli-alpha testnet (1 pts)
