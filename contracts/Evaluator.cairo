@@ -1,4 +1,4 @@
-######### ERC-20 evaluator
+######### ERC-20 Tutorial Evaluator
 # Soundtrack https://www.youtube.com/watch?v=iuWa5wh8lG0
 
 %lang starknet
@@ -18,7 +18,7 @@ from contracts.lib.UTILS import (
 )
 
 from contracts.utils.ex00_base import (
-    tderc20_address,
+    tuto_erc20_address,
     ex_initializer,
     has_validated_exercise,
     validate_and_distribute_points_once,
@@ -30,7 +30,8 @@ from contracts.utils.ex00_base import (
     max_rank_storage
 )
 
-from contracts.token.ERC20.ITDERC20 import ITDERC20
+from contracts.token.ERC20.ITUTOERC20 import ITUTOERC20
+from contracts.token.ERC20.IDTKERC20 import IDTKERC20
 from contracts.token.ERC20.IERC20 import IERC20
 
 from contracts.IERC20Solution import IERC20Solution
@@ -97,11 +98,11 @@ end
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         _players_registry : felt,
-        _tderc20_address : felt,
+        _tuto_erc20_address : felt,
         _dummy_token_address : felt,
         _workshop_id : felt,
         _first_teacher : felt):
-    ex_initializer(_tderc20_address, _players_registry, _workshop_id)
+    ex_initializer(_tuto_erc20_address, _players_registry, _workshop_id)
     dummy_token_address_storage.write(_dummy_token_address)
     teacher_accounts.write(_first_teacher, 1)
     # Hard coded value for now
@@ -353,7 +354,7 @@ func ex11_claimed_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     let (initial_dtk_custody) = IExerciseSolution.tokens_in_custody(
         contract_address=submitted_exercise_address, account=evaluator_address)
     # Initial balance of ExerciseSolution (used to check that the faucet was called during this execution)
-    let (initial_solution_dtk_balance) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (initial_solution_dtk_balance) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
 
     # Claiming tokens for the evaluator
     let (claimed_amount) = IExerciseSolution.get_tokens_from_contract(submitted_exercise_address)
@@ -371,7 +372,7 @@ func ex11_claimed_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     UTILS_assert_uint256_eq(custody_difference, claimed_amount)
 
     # Finally, checking that the balance of ExerciseSolution was also increased by the same amount
-    let (final_solution_dtk_balance) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (final_solution_dtk_balance) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
     UTILS_assert_uint256_difference(
         final_solution_dtk_balance, initial_solution_dtk_balance, custody_difference)
 
@@ -392,10 +393,10 @@ func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
 
     ############### Initial state
     # Initial balance of ExerciseSolution that will be used to check that its balance decreased in this tx
-    let (initial_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (initial_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
 
     # Initial balance of Evaluator
-    let (initial_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (initial_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
 
     # Initial amount in custody of ExerciseSolution for Evaluator
     let (initial_dtk_custody) = IExerciseSolution.tokens_in_custody(
@@ -410,11 +411,11 @@ func ex12_withdraw_from_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
 
     ############### Balances checks
     # Checking that the evaluator's balance is now increased by `withdrawn_amount`
-    let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (final_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
     UTILS_assert_uint256_difference(final_dtk_balance_eval, initial_dtk_balance_eval, withdrawn_amount)
 
     # Checking that the balance of ExerciseSolution was also decreased by the same amount
-    let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (final_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
     UTILS_assert_uint256_difference(
         initial_dtk_balance_submission, final_dtk_balance_submission, withdrawn_amount)
 
@@ -478,8 +479,8 @@ func ex15_deposit_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 
     ############### Initial state
     # Reading initial balances of DTK
-    let (initial_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
-    let (initial_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (initial_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (initial_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
 
     # Reading initial amount of DTK in custody of ExerciseSolution for Evaluator
     let (initial_dtk_custody) = IExerciseSolution.tokens_in_custody(
@@ -496,12 +497,12 @@ func ex15_deposit_tokens{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 
     ############### Balances check
     # Check that ExerciseSolution's balance of DTK also increased by ten tokens
-    let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (final_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
     UTILS_assert_uint256_difference(
         final_dtk_balance_submission, initial_dtk_balance_submission, ten_tokens_uint256)
 
     # Check that Evaluator's balance of DTK decreased by ten tokens
-    let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (final_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
     UTILS_assert_uint256_difference(
         initial_dtk_balance_eval, final_dtk_balance_eval, ten_tokens_uint256)
 
@@ -531,8 +532,8 @@ func ex16_17_deposit_and_mint{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
     let (initial_est_balance_eval) = IERC20.balanceOf(submitted_exercise_token_address, evaluator_address)
 
     # Reading initial balances of DTK
-    let (initial_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
-    let (initial_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (initial_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (initial_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
 
     ############### Actions
     # Allow ExerciseSolution to spend 10 DTK of Evaluator
@@ -544,12 +545,12 @@ func ex16_17_deposit_and_mint{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
 
     ############### Balances checks
     # Check that ExerciseSolution's balance of DTK also increased by ten tokens
-    let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (final_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
     UTILS_assert_uint256_difference(
         final_dtk_balance_submission, initial_dtk_balance_submission, ten_tokens_uint256)
 
     # Check that Evaluator's balance of DTK decreased by ten tokens
-    let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (final_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
     UTILS_assert_uint256_difference(
         initial_dtk_balance_eval, final_dtk_balance_eval, ten_tokens_uint256)
 
@@ -586,8 +587,8 @@ func ex18_withdraw_and_burn{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     let (initial_est_balance_eval) = IERC20.balanceOf(submitted_exercise_token_address, evaluator_address)
 
     # Reading initial balances of DTK
-    let (initial_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
-    let (initial_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (initial_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (initial_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
 
     ############### Actions
     # Allow ExerciseSolution to spend all evaluator's ExercisesSolutionTokens
@@ -604,11 +605,11 @@ func ex18_withdraw_and_burn{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
 
     ############### Balances checks
     # Checking that the evaluator's balance is now increased by `withdrawn_amount`
-    let (final_dtk_balance_eval) = IERC20.balanceOf(read_dtk_address, evaluator_address)
+    let (final_dtk_balance_eval) = IDTKERC20.balanceOf(read_dtk_address, evaluator_address)
     UTILS_assert_uint256_difference(final_dtk_balance_eval, initial_dtk_balance_eval, withdrawn_amount)
 
     # Checking that the balance of ExerciseSolution was also decreased by the same amount
-    let (final_dtk_balance_submission) = IERC20.balanceOf(read_dtk_address, submitted_exercise_address)
+    let (final_dtk_balance_submission) = IDTKERC20.balanceOf(read_dtk_address, submitted_exercise_address)
     UTILS_assert_uint256_difference(
         initial_dtk_balance_submission, final_dtk_balance_submission, withdrawn_amount)
 

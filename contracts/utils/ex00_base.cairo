@@ -11,7 +11,7 @@ from starkware.cairo.common.math import assert_not_zero
 from starkware.starknet.common.syscalls import (get_contract_address, get_caller_address)
 
 from contracts.token.ERC20.IERC20 import IERC20
-from contracts.token.ERC20.ITDERC20 import ITDERC20
+from contracts.token.ERC20.ITUTOERC20 import ITUTOERC20
 from contracts.utils.Iplayers_registry import Iplayers_registry
 from contracts.lib.UTILS import UTILS_assert_uint256_difference
 from contracts.IERC20Solution import IERC20Solution
@@ -22,7 +22,7 @@ from contracts.IERC20Solution import IERC20Solution
 #
 
 @storage_var
-func tderc20_address_storage() -> (tderc20_address_address : felt):
+func tuto_erc20_address_storage() -> (tuto_erc20_address_address : felt):
 end
 
 @storage_var
@@ -59,9 +59,9 @@ end
 #
 
 @view
-func tderc20_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (_tderc20_address : felt):
-    let (_tderc20_address) = tderc20_address_storage.read()
-    return (_tderc20_address)
+func tuto_erc20_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (_tuto_erc20_address : felt):
+    let (_tuto_erc20_address) = tuto_erc20_address_storage.read()
+    return (_tuto_erc20_address)
 end
 
 @view
@@ -104,11 +104,11 @@ func ex_initializer{
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
     }(
-        _tderc20_address : felt,
+        _tuto_erc20_address : felt,
         _players_registry : felt,
         _workshop_id : felt
     ):
-    tderc20_address_storage.write(_tderc20_address)
+    tuto_erc20_address_storage.write(_tuto_erc20_address)
     players_registry_storage.write(_players_registry)
     workshop_id_storage.write(_workshop_id)
     return ()
@@ -125,9 +125,9 @@ func distribute_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     # We also add the required number of decimals
     let points_to_credit : Uint256 = Uint256(amount*1000000000000000000, 0)
     # Retrieving contract address from storage
-    let (contract_address) = tderc20_address_storage.read()
+    let (contract_address) = tuto_erc20_address_storage.read()
     # Calling the ERC20 contract to distribute points
-    ITDERC20.distribute_points(contract_address=contract_address, to = to, amount = points_to_credit)
+    ITUTOERC20.distribute_points(contract_address=contract_address, to = to, amount = points_to_credit)
     return()
 end
 
