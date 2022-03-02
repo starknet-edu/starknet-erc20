@@ -15,8 +15,10 @@ It is aimed at developers that:
 This workshop is the third in a series that will cover broad smart contract concepts (writing and deploying ERC20/ERC721, bridging assets, L1 <-> L2 messaging...).  
 You can find the previous tutorials here:
 
-- [Introduction to cairo]((https://github.com/l-henri/starknet-cairo-101))
+- [Introduction to cairo](https://github.com/l-henri/starknet-cairo-101)
 - [ERC721](https://github.com/l-henri/starknet-erc721)
+
+This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com/trevis_dev)) in collaboration with Henri Lieutaud and Lucas Levy, based on Henri's original [ERC20 101](https://github.com/l-henri/erc20-101) and [ERC20 102](https://github.com/l-henri/erc20-102) tutorials for Solidity. 
 
 Interested in helping writing those? [Reach out](https://twitter.com/HenriLieutaud)!
 
@@ -40,7 +42,7 @@ Do you have a question? Join our [Discord server](https://discord.gg/YHz7drT3), 
     - [Disclaimer](#disclaimer)
     - [Providing feedback](#providing-feedback)
   - [Table of contents](#table-of-contents)
-  - [How to work on this TD](#how-to-work-on-this-td)
+  - [How to work on this tutorial](#how-to-work-on-this-tutorial)
     - [Before you start](#before-you-start)
     - [Workflow](#workflow)
     - [Checking your progress](#checking-your-progress)
@@ -78,15 +80,15 @@ Do you have a question? Join our [Discord server](https://discord.gg/YHz7drT3), 
       - [Exercise 16 and 17](#exercise-16-and-17)
       - [Exercise 18](#exercise-18)
 
-## How to work on this TD
+## How to work on this tutorial
 
 ### Before you start
 
 The tutorial has three components:
 
-- An [ERC20 token](contracts/token/ERC20/TDERC20.cairo), ticker ERC20-101, that is used to keep track of points
-- An [evaluator contract](contracts/Evaluator.cairo), that is able to mint and distribute ERC20-101 points
-- A second [ERC20 token](contracts/token/ERC20/dummy_token.cairo), ticker DTK, that is used to make fake payments
+- An [ERC20 token](contracts/token/ERC20/TUTOERC20.cairo), ticker `ERC20-101`, that is used to keep track of points
+- An [evaluator contract](contracts/Evaluator.cairo), that is able to mint and distribute `ERC20-101` points
+- A second [ERC20 token](contracts/token/ERC20/DTKERC20.cairo), "Dummy Token", ticker `DTK20`, that is used to make fake payments
 
 It is structured in two parts:
 
@@ -118,7 +120,7 @@ Your objective is to gather as many ERC20-101 points as possible. Please note :
 
 Your points will get credited in Argent X; though this may take some time. If you want to monitor your points count in real time, you can also see your balance in voyager!
 
-- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/0x056a478b341acf8ea1714d6fd4fbc5c6af5c7ffcf07e58186a11fd0ea2946185) in voyager, in the "read contract" tab
+- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/0x037b0ca3995eb2d79626b6a0eac40fe4ba19ddf73d81423626b44755614b9cee) in voyager, in the "read contract" tab
 - Enter your address in decimal in the "balanceOf" function
 
 You can also check your overall progress [here](https://tutohenri.surge.sh)
@@ -130,7 +132,7 @@ You sent a transaction, and it is shown as "undetected" in voyager? This can mea
 - Your transaction is pending, and will be included in a block shortly. It will then be visible in voyager.
 - Your transaction was invalid, and will NOT be included in a block (there is no such thing as a failed transaction in StarkNet).
 
-You can (and should) check the status of your transaction with the following URL  [https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=](https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=)  , where you can append your transaction hash.
+You can (and should) check the status of your transaction with the following URL  [https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=](https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=) , where you can append your transaction hash.
 
 #### Install nile
 
@@ -166,11 +168,11 @@ nile compile
 
 ## Contract addresses
 
-| Contract code                                                | Contract on voyager                         |
-| ------------------------------------------------------------ | ------------------------------------------- |
-| [Points counter ERC20](contracts/token/ERC20/TDERC20.cairo)  | [0x056a478b341acf8ea1714d6fd4fbc5c6af5c7ffcf07e58186a11fd0ea2946185](https://goerli.voyager.online/contract/0x056a478b341acf8ea1714d6fd4fbc5c6af5c7ffcf07e58186a11fd0ea2946185) |
-| [Evaluator](contracts/Evaluator.cairo)                       | [0x0076e51f26ecd07fb5a23fefd92987c1b6f19784407434080aa02bf7ebd3138b](https://goerli.voyager.online/contract/0x0076e51f26ecd07fb5a23fefd92987c1b6f19784407434080aa02bf7ebd3138b) |
-| [Dummy ERC20 token](contracts/token/ERC20/dummy_token.cairo) | [0x0596ae0cc42fdf8434526584bd6f13389e3e975839efd4214f84f0262f7e3d9b](https://goerli.voyager.online/contract/0x0596ae0cc42fdf8434526584bd6f13389e3e975839efd4214f84f0262f7e3d9b) |
+| Contract code                                                     | Contract on voyager                         |
+|-------------------------------------------------------------------| ------------------------------------------- |
+| [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo)     | [0x037b0ca3995eb2d79626b6a0eac40fe4ba19ddf73d81423626b44755614b9cee](https://goerli.voyager.online/contract/0x037b0ca3995eb2d79626b6a0eac40fe4ba19ddf73d81423626b44755614b9cee) |
+| [Evaluator](contracts/Evaluator.cairo)                            | [0x05bf05eece944b360ff0098eb9288e49bd0007e5a9ed80aefcb740e680e67ea4](https://goerli.voyager.online/contract/0x05bf05eece944b360ff0098eb9288e49bd0007e5a9ed80aefcb740e680e67ea4) |
+| [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x029260ce936efafa6d0042bc59757a653e3f992b97960c1c4f8ccd63b7a90136](https://goerli.voyager.online/contract/0x029260ce936efafa6d0042bc59757a653e3f992b97960c1c4f8ccd63b7a90136) |
 
 ## Points list
 
@@ -188,7 +190,7 @@ These points will be attributed manually if you do not manage to have your contr
 
 #### Exercise 1
 
-- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in [`Evaluator.cairo`](https://goerli.voyager.online/contract/0x0076e51f26ecd07fb5a23fefd92987c1b6f19784407434080aa02bf7ebd3138b) by calling getters `read_ticker()` and `read_supply()`
+- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in [`Evaluator.cairo`](https://goerli.voyager.online/contract/0x05bf05eece944b360ff0098eb9288e49bd0007e5a9ed80aefcb740e680e67ea4) by calling getters `read_ticker()` and `read_supply()`
 
 - Create an ERC20 token contract with the proper ticker and supply (2 pts)
 - Deploy it to the Goerli-alpha testnet (1 pts)
