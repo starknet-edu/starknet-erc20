@@ -15,7 +15,7 @@ It is aimed at developers that:
 This workshop is the third in a series that will cover broad smart contract concepts (writing and deploying ERC20/ERC721, bridging assets, L1 <-> L2 messaging...).  
 You can find the previous tutorials here:
 
-- [Introduction to cairo]((https://github.com/l-henri/starknet-cairo-101))
+- [Introduction to cairo](https://github.com/l-henri/starknet-cairo-101)
 - [ERC721](https://github.com/l-henri/starknet-erc721)
 
 This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com/trevis_dev)) in collaboration with Henri Lieutaud and Lucas Levy, based on Henri's original [ERC20 101](https://github.com/l-henri/erc20-101) and [ERC20 102](https://github.com/l-henri/erc20-102) tutorials for Solidity. 
