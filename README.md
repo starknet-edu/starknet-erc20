@@ -86,9 +86,9 @@ Do you have a question? Join our [Discord server](https://discord.gg/YHz7drT3), 
 
 The tutorial has three components:
 
-- An [ERC20 token](contracts/token/ERC20/TUTOERC20.cairo), ticker ERC20-101, that is used to keep track of points
-- An [evaluator contract](contracts/Evaluator.cairo), that is able to mint and distribute ERC20-101 points
-- A second [ERC20 token](contracts/token/ERC20/dummy_token.cairo), ticker DTK, that is used to make fake payments
+- An [ERC20 token](contracts/token/ERC20/TUTOERC20.cairo), ticker `ERC20-101`, that is used to keep track of points
+- An [evaluator contract](contracts/Evaluator.cairo), that is able to mint and distribute `ERC20-101` points
+- A second [ERC20 token](contracts/token/ERC20/DTKERC20.cairo), "Dummy Token", ticker `DTK20`, that is used to make fake payments
 
 It is structured in two parts:
 
@@ -120,9 +120,7 @@ Your objective is to gather as many ERC20-101 points as possible. Please note :
 
 Your points will get credited in Argent X; though this may take some time. If you want to monitor your points count in real time, you can also see your balance in voyager!
 
-**TODO: Update contract address**
-
-- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/) in voyager, in the "read contract" tab
+- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/0x037b0ca3995eb2d79626b6a0eac40fe4ba19ddf73d81423626b44755614b9cee) in voyager, in the "read contract" tab
 - Enter your address in decimal in the "balanceOf" function
 
 You can also check your overall progress [here](https://tutohenri.surge.sh)
@@ -168,13 +166,13 @@ nile compile
 
 - To convert data to felt use the [`utils.py`](utils.py) script
 
-## Contract addresses **TODO: Update contract addresses here**
+## Contract addresses
 
-| Contract code                                                 | Contract on voyager                         |
-|---------------------------------------------------------------| ------------------------------------------- |
-| [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo) | [](https://goerli.voyager.online/contract/) |
-| [Evaluator](contracts/Evaluator.cairo)                        | [](https://goerli.voyager.online/contract/) |
-| [Dummy ERC20 token](contracts/token/ERC20/dummy_token.cairo)  | [](https://goerli.voyager.online/contract/) |
+| Contract code                                                     | Contract on voyager                         |
+|-------------------------------------------------------------------| ------------------------------------------- |
+| [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo)     | [0x037b0ca3995eb2d79626b6a0eac40fe4ba19ddf73d81423626b44755614b9cee](https://goerli.voyager.online/contract/0x037b0ca3995eb2d79626b6a0eac40fe4ba19ddf73d81423626b44755614b9cee) |
+| [Evaluator](contracts/Evaluator.cairo)                            | [0x05bf05eece944b360ff0098eb9288e49bd0007e5a9ed80aefcb740e680e67ea4](https://goerli.voyager.online/contract/0x05bf05eece944b360ff0098eb9288e49bd0007e5a9ed80aefcb740e680e67ea4) |
+| [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x029260ce936efafa6d0042bc59757a653e3f992b97960c1c4f8ccd63b7a90136](https://goerli.voyager.online/contract/0x029260ce936efafa6d0042bc59757a653e3f992b97960c1c4f8ccd63b7a90136) |
 
 ## Points list
 
@@ -191,8 +189,8 @@ These points will be attributed manually if you do not manage to have your contr
 ### ERC20 basics
 
 #### Exercise 1
-**TODO: Update contract address here**
-- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in [`Evaluator.cairo`](https://goerli.voyager.online/contract/) by calling getters `read_ticker()` and `read_supply()`
+
+- Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in [`Evaluator.cairo`](https://goerli.voyager.online/contract/0x05bf05eece944b360ff0098eb9288e49bd0007e5a9ed80aefcb740e680e67ea4) by calling getters `read_ticker()` and `read_supply()`
 
 - Create an ERC20 token contract with the proper ticker and supply (2 pts)
 - Deploy it to the Goerli-alpha testnet (1 pts)
