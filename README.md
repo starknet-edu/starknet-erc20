@@ -243,7 +243,8 @@ The total amount of points to collect from completing all exercises up to this p
 
 ### Submissions
 
-Submissions for this part are given by calling `submit_exercise_solution()` in the Evaluator, as explained below.
+| ❗Submissions for this part are given to the Evaluator by calling `submit_exercise_solution()`❗<br/>(instead of `submit_erc20_solution()`)|
+|--------------------------------------------------------------------------------------------------------------------------------------------|
 
 ### Manipulating ERC20 tokens from other contracts
 
