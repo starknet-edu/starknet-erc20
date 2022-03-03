@@ -186,6 +186,9 @@ These points will be attributed manually if you do not manage to have your contr
 
 ## Part 1
 
+| 📝 Submissions for this part are given to the Evaluator by calling `submit_erc20_solution()` 📝 <br/>(*NOT `submit_exercise_solution()`*)|
+|--------------------------------------------------------------------------------------------------------------------------------------------|
+
 ### ERC20 basics
 
 #### Exercise 1
