@@ -166,6 +166,15 @@ nile compile
 
 - To convert data to felt use the [`utils.py`](utils.py) script
 
+Open Python in interactive mode after running script
+  ```bash
+  python -i utils.py
+  ```
+  ```python
+  >>> str_to_felt('ERC20-101')
+  1278752977803006783537
+  ```
+
 ## Contract addresses
 
 | Contract code                                                     | Contract on voyager                         |
