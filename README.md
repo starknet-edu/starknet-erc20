@@ -223,7 +223,7 @@ The total amount of points to collect from completing all exercises up to this p
 #### Exercise 3
 
 - Create a `get_tokens()` function in your contract, deploy it, and call the `ex3_test_get_token()` function that distributes tokens to the caller (2 pts).
-- `get_tokens()` should send the caller some of your tokens. It should return the exact amount it sends so the Evaluator can check that the increase of balance and the amount sent corresponds.
+- `get_tokens()` should mint the caller some of your token. It should return the exact amount it sends so the Evaluator can check that the increase of balance and the amount sent corresponds.
 
 The total amount of points to collect from completing all exercises up to this point is : 10 points
 
@@ -291,7 +291,8 @@ The total amount of points to collect from completing all exercises up to this p
 
 ### Approve and transferFrom
 
-#### Exercise 13
+#### Exercise 13get_tokens() should send the caller some of your tokens. It should return the exact amount it sends so the Evaluator can check that the increase of balance and the amount sent corresponds.
+
 
 - Use ERC20 function to allow your contract to manipulate your DTKs. Call `ex13_approved_exercise_solution()` to claim points (1 pts)
 
