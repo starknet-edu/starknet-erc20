@@ -114,7 +114,7 @@ Your objective is to gather as many ERC20-101 points as possible. Please note :
 
 #### Counting your points
 
-Your points will get credited in Argent X; though this may take some time. If you want to monitor your points count in real time, you can also see your balance in voyager!
+Your points will get credited in your wallet; though this may take some time. If you want to monitor your points count in real time, you can also see your balance in voyager!
 
 - Go to the  [ERC20 counter](https://goerli.voyager.online/contract/0x037b0ca3995eb2d79626b6a0eac40fe4ba19ddf73d81423626b44755614b9cee) in voyager, in the "read contract" tab
 - Enter your address in decimal in the "balanceOf" function
