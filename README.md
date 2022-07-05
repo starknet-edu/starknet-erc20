@@ -14,7 +14,7 @@ You can find the previous tutorials here:
 - [Introduction to cairo](https://github.com/l-henri/starknet-cairo-101)
 - [ERC721](https://github.com/l-henri/starknet-erc721)
 
-This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com/trevis_dev)) in collaboration with Henri Lieutaud and Lucas Levy, based on Henri's original [ERC20 101](https://github.com/l-henri/erc20-101) and [ERC20 102](https://github.com/l-henri/erc20-102) tutorials for Solidity. 
+This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com/trevis_dev)) in collaboration with Henri Lieutaud and Lucas Levy, based on Henri's original [ERC20 101](https://github.com/l-henri/erc20-101) and [ERC20 102](https://github.com/l-henri/erc20-102) tutorials for Solidity.
 
 Interested in helping writing those? [Reach out](https://twitter.com/HenriLieutaud)!
 
@@ -44,7 +44,7 @@ Do you have a question? Join our [Discord server](https://discord.gg/c5Ry5eK4st)
     - [Checking your progress](#checking-your-progress)
       - [Counting your points](#counting-your-points)
       - [Transaction status](#transaction-status)
-      - [Install nile](#install-nile)
+      - [Install cairo-lang](#install-cairo-lang)
         - [With pip](#with-pip)
         - [With docker](#with-docker)
     - [Getting to work](#getting-to-work)
@@ -75,6 +75,7 @@ Do you have a question? Join our [Discord server](https://discord.gg/c5Ry5eK4st)
     - [Tracking user deposits with a deposit wrapper ERC20](#tracking-user-deposits-with-a-deposit-wrapper-erc20)
       - [Exercise 16 and 17](#exercise-16-and-17)
       - [Exercise 18](#exercise-18)
+      - [The end?](#the-end)
 
 ## How to work on this tutorial
 
@@ -121,7 +122,6 @@ Your points will get credited in your wallet; though this may take some time. If
 
 You can also check your overall progress [here](https://starknet-tutorials.vercel.app)
 
-
 #### Transaction status
 
 You sent a transaction, and it is shown as "undetected" in voyager? This can mean two things:
@@ -131,12 +131,16 @@ You sent a transaction, and it is shown as "undetected" in voyager? This can mea
 
 You can (and should) check the status of your transaction with the following URL  [https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=](https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=) , where you can append your transaction hash.
 
-#### Install nile
+#### Install cairo-lang
 
 ##### With pip
 
 - Set up the environment following [these instructions](https://starknet.io/docs/quickstart.html#quickstart)
-- Install [Nile](https://github.com/OpenZeppelin/nile).
+- Install [OpenZeppelin's cairo contracts](https://github.com/OpenZeppelin/cairo-contracts).
+
+```bash
+pip install openzeppelin-cairo-contracts
+```
 
 ##### With docker
 
@@ -145,19 +149,19 @@ You can (and should) check the status of your transaction with the following URL
 for mac m1:
 
 ```bash
-alias nile='docker run --rm -v "$PWD":"$PWD" -w "$PWD" lucaslvy/nile:0.8.0-arm'
+alias cairo='docker run --rm -v "$PWD":"$PWD" -w "$PWD" shardlabs/cairo-cli:latest-arm'
 ```
 
 for amd processors
 
 ```bash
-alias nile='docker run --rm -v "$PWD":"$PWD" -w "$PWD" lucaslvy/nile:0.8.0-x86'
+alias cairo='docker run --rm -v "$PWD":"$PWD" -w "$PWD" shardlabs/cairo-cli:latest'
 ```
 
 - Windows
 
 ```bash
-docker run --rm -it -v ${pwd}:/work --workdir /work lucaslvy/0.8.0-x86
+docker run --rm -it -v ${pwd}:/work --workdir /work shardlabs/cairo-cli:latest
 ```
 
 ### Getting to work
@@ -166,15 +170,17 @@ docker run --rm -it -v ${pwd}:/work --workdir /work lucaslvy/0.8.0-x86
 - Test that you are able to compile the project
 
 ```bash
-nile compile
+starknet-compile contracts/Evaluator.cairo
 ```
 
 - To convert data to felt use the [`utils.py`](utils.py) script
 
 Open Python in interactive mode after running script
+
   ```bash
   python -i utils.py
   ```
+
   ```python
   >>> str_to_felt('ERC20-101')
   1278752977803006783537
@@ -209,7 +215,7 @@ These points will be attributed manually if you do not manage to have your contr
 
 - Call `ex1_assign_rank()` in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply in [`Evaluator.cairo`](https://goerli.voyager.online/contract/0x05bf05eece944b360ff0098eb9288e49bd0007e5a9ed80aefcb740e680e67ea4) by calling getters `read_ticker()` and `read_supply()`
 
-- Create an ERC20 token contract with the proper ticker and supply (2 pts)
+- Create an ERC20 token contract with the proper ticker and supply. You can use [this implementation](https://github.com/OpenZeppelin/cairo-contracts/blob/main/src/openzeppelin/token/erc20/ERC20.cairo) as a base (2 pts)
 - Deploy it to the Goerli-alpha testnet (1 pts)
 - Call `submit_erc20_solution()` in the Evaluator to configure the contract you want evaluated (2pts) (Previous 3 points for the ERC20 and the deployment are also attributed at that step)
 
@@ -292,8 +298,9 @@ The total amount of points to collect from completing all exercises up to this p
 
 ### Approve and transferFrom
 
-#### Exercise 13get_tokens() should send the caller some of your tokens. It should return the exact amount it sends so the Evaluator can check that the increase of balance and the amount sent corresponds.
+#### Exercise 13
 
+- get_tokens() should send the caller some of your tokens. It should return the exact amount it sends so the Evaluator can check that the increase of balance and the amount sent corresponds
 
 - Use ERC20 function to allow your contract to manipulate your DTKs. Call `ex13_approved_exercise_solution()` to claim points (1 pts)
 
