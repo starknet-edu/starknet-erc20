@@ -8,11 +8,13 @@ It is aimed at developers that:
 
 This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com/trevis_dev)) in collaboration with Henri Lieutaud and Lucas Levy, based on Henri's original [ERC20 101](https://github.com/l-henri/erc20-101) and [ERC20 102](https://github.com/l-henri/erc20-102) tutorials for Solidity.
 
+​
+​
 ## Introduction
 
 ### Disclaimer
 
-​
+
 Don't expect any kind of benefit from using this, other than learning a bunch of cool stuff about StarkNet, the first general purpose validity rollup on the Ethereum Mainnnet.
 ​
 StarkNet is still in Alpha. This means that development is ongoing, and the paint is not dry everywhere. Things will get better, and in the meanwhile, we make things work with a bit of duct tape here and there!
@@ -150,7 +152,8 @@ For example to solve the first exercise the workflow would be the following:
 | [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x029260ce936efafa6d0042bc59757a653e3f992b97960c1c4f8ccd63b7a90136](https://goerli.voyager.online/contract/0x029260ce936efafa6d0042bc59757a653e3f992b97960c1c4f8ccd63b7a90136) |
 
 
-
+​
+​
 ## Tasks list
 Today you will deploy your own ERC20 token on StarkNet!
  
@@ -257,7 +260,8 @@ starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
 - Deploy your contract and call [`submit_exercise_solution()`](contracts/Evaluator.cairo#L754) in the Evaluator to register it
 - Call [`ex18_withdraw_and_burn`](contracts/Evaluator.cairo#L659) in the evaluator to prove your code works (2 pts)
 
-
+​
+​
 ## Annex - Useful tools
 ### Converting data to and from decimal
 To convert data to felt use the [`utils.py`](utils.py) script
