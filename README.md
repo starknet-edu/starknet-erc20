@@ -10,10 +10,10 @@ This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com
 
 ​
 ​
+
 ## Introduction
 
 ### Disclaimer
-
 
 Don't expect any kind of benefit from using this, other than learning a bunch of cool stuff about StarkNet, the first general purpose validity rollup on the Ethereum Mainnnet.
 ​
@@ -32,14 +32,14 @@ For each exercice, you will have to write a new version on your contract, deploy
 
 This workshop is the third in a series aimed at teaching how to build on StarkNet. Checkout out the following:
 
-|Topic|GitHub repo|
-|---|---|
-|Learn how to read Cairo code |[Cairo 101](https://github.com/starknet-edu/starknet-cairo-101)|
-|Deploy and customize an ERC721 NFT |[StarkNet ERC721](https://github.com/starknet-edu/starknet-erc721)|
-|Deploy and customize an ERC20 token (you are here)|[StarkNet ERC20](https://github.com/starknet-edu/starknet-erc20)|
-|Build a cross layer application|[StarkNet messaging bridge](https://github.com/starknet-edu/starknet-messaging-bridge)|
-|Debug your Cairo contracts easily|[StarkNet debug](https://github.com/starknet-edu/starknet-debug)|
-|Design your own account contract|[StarkNet account abstraction](https://github.com/starknet-edu/starknet-accounts)|
+| Topic                                              | GitHub repo                                                                            |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Learn how to read Cairo code                       | [Cairo 101](https://github.com/starknet-edu/starknet-cairo-101)                        |
+| Deploy and customize an ERC721 NFT                 | [StarkNet ERC721](https://github.com/starknet-edu/starknet-erc721)                     |
+| Deploy and customize an ERC20 token (you are here) | [StarkNet ERC20](https://github.com/starknet-edu/starknet-erc20)                       |
+| Build a cross layer application                    | [StarkNet messaging bridge](https://github.com/starknet-edu/starknet-messaging-bridge) |
+| Debug your Cairo contracts easily                  | [StarkNet debug](https://github.com/starknet-edu/starknet-debug)                       |
+| Design your own account contract                   | [StarkNet account abstraction](https://github.com/starknet-edu/starknet-accounts)      |
 
 ### Providing feedback & getting help
 
@@ -55,7 +55,6 @@ Do you have a question? Join our [Discord server](https://discord.gg/5QetpWWPE5)
 ​
 Are you interested in following online workshops about learning how to dev on StarkNet? [Subscribe here](http://eepurl.com/hFnpQ5)
 
-
 ### Contributing
 
 This project can be made better and will evolve as StarkNet matures. Your contributions are welcome! Here are things that you can do to help:
@@ -69,12 +68,13 @@ This project can be made better and will evolve as StarkNet matures. Your contri
 ​
 
 ## Getting ready to work
+
 ### Step 1 - Clone the repo
+
 ```bash
 git clone https://github.com/starknet-edu/starknet-erc20
 cd starknet-erc20
 ```
-
 
 ### Step 2 - Set up your environment
 
@@ -85,8 +85,7 @@ There are two ways to set up your environment on StarkNet: a local installation,
 
 For a production setup instructions we wrote [this article](https://medium.com/starknet-edu/the-ultimate-starknet-dev-environment-716724aef4a7).
 
-
-#### Option A - Set up a local python environment 
+#### Option A - Set up a local python environment
 
 - Set up the environment following [these instructions](https://starknet.io/docs/quickstart.html#quickstart)
 - Install [OpenZeppelin's cairo contracts](https://github.com/OpenZeppelin/cairo-contracts).
@@ -116,18 +115,22 @@ alias cairo='docker run --rm -v "$PWD":"$PWD" -w "$PWD" shardlabs/cairo-cli:late
 ```bash
 docker run --rm -it -v ${pwd}:/work --workdir /work shardlabs/cairo-cli:latest
 ```
+
 ### Step 3 -Test that you are able to compile the project
 
 ```bash
 starknet-compile contracts/Evaluator.cairo
 ```
+
 ​
 ​
 
 ## Working on the tutorial
+
 ### Workflow
 
-To do this tutorial you will have to interact with the [`Evaluator.cairo`](contracts/Evaluator.cairo) contract. To validate an exercise you will have to 
+To do this tutorial you will have to interact with the [`Evaluator.cairo`](contracts/Evaluator.cairo) contract. To validate an exercise you will have to
+
 - Read the evaluator code to figure out what is expected of your contract
 - Customize your contract's code
 - Deploy it to StarkNet's testnet. This is done using the CLI.
@@ -147,19 +150,22 @@ For example to solve the first exercise the workflow would be the following:
 - The Evaluator contract sometimes needs to make payments to buy your tokens. Make sure he has enough dummy tokens to do so! If not, you should get dummy tokens from the dummy tokens contract and send them to the evaluator.
 
 ### Contracts code and addresses
-| Contract code                                                     | Contract on voyager                         |
-|-------------------------------------------------------------------| ------------------------------------------- |
+
+| Contract code                                                     | Contract on voyager                                                                                                                                                           |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo)     | [0x5c5f26603b22799e8126634d8fd185c75d0200ac1ce721bb406292054e80465](https://goerli.voyager.online/contract/0x5c5f26603b22799e8126634d8fd185c75d0200ac1ce721bb406292054e80465) |
 | [Evaluator](contracts/Evaluator.cairo)                            | [0x69fa64a23e76560edc7dfa94101734048ad7d15f54e86d677cf7b42e9568471](https://goerli.voyager.online/contract/0x69fa64a23e76560edc7dfa94101734048ad7d15f54e86d677cf7b42e9568471) |
 | [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x6cf7610c6209b72980c39196bb94b0d1c952dc1248be14cf149ed16a2c5864f](https://goerli.voyager.online/contract/0x6cf7610c6209b72980c39196bb94b0d1c952dc1248be14cf149ed16a2c5864f) |
 
+​
+​
 
-​
-​
 ## Tasks list
+
 Today you will deploy your own ERC20 token on StarkNet!
- 
+
 The tutorial is structured in two parts
+
 - In the first part (exercises 1 to 9), you will have to deploy an ERC-20 contract.
 - In the second part (exercises 10 to 18), you will deploy another contract that will itself have to interact with ERC20 tokens.
 
@@ -186,7 +192,6 @@ starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
 - Deploy your contract and call [`submit_erc20_solution()`](contracts/Evaluator.cairo#L733) in the Evaluator to register it
 - Call the [`ex3_test_get_token()`](contracts/Evaluator.cairo#L209)  function that distributes tokens to the caller (2 pts).
 
-
 ### Exercises 4, 5 and 6 - Creating an allow list
 
 - Create a customer allow listing function. Only allow listed users should be able to call `get_tokens()`.
@@ -197,7 +202,6 @@ starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
   - It can't get tokens using `get_tokens()` (1 pt)
   - It can call `request_allowlist()` and have confirmation that it went through (1 pt)
   - It can then get tokens using the same `get_tokens()` (2 pt)
-
 
 ### Exercises 7, 8 and 9 - Creating a multi tier allow list
 
@@ -210,12 +214,10 @@ starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
   - It can call `request_allowlist_level(1)` , then call `get_tokens()` and get N tokens (2 pt)
   - It can call `request_allowlist_level(2)` , then call `get_tokens()` and get > N tokens (2 pt)
 
-
 ### Exercise 10 - Claiming dummy tokens
 
 - Manually claim tokens on the predeployed claimable [ERC20](https://goerli.voyager.online/contract/0x6cf7610c6209b72980c39196bb94b0d1c952dc1248be14cf149ed16a2c5864f) ([DTK tokens](contracts/token/ERC20/DTKERC20.cairo)) (1 pts)
 - Claim your points by calling [`ex10_claimed_tokens()`](contracts/Evaluator.cairo#L364) in the evaluator (1 pts)
-
 
 ### Exercise 11 - Calling the faucet from your contract
 
@@ -239,7 +241,7 @@ starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
 
 ### Exercise 14 - Revoking approval
 
-- Use voyager to revoke the previous authorization. 
+- Use voyager to revoke the previous authorization.
 - Call [`ex14_revoked_exercise_solution()`](contracts/Evaluator.cairo#L512)  to claim points (1 pts)
 
 ### Exercise 15 - Using transferFrom
@@ -264,8 +266,11 @@ starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
 
 ​
 ​
+
 ## Annex - Useful tools
+
 ### Converting data to and from decimal
+
 To convert data to felt use the [`utils.py`](utils.py) script
 To open Python in interactive mode after running script
 
@@ -277,7 +282,6 @@ To open Python in interactive mode after running script
   >>> str_to_felt('ERC20-101')
   1278752977803006783537
   ```
-
 
 ### Checking your progress & counting your points
 
