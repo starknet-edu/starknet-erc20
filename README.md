@@ -24,9 +24,9 @@ StarkNet is still in Alpha. This means that development is ongoing, and the pain
 
 The goal of this tutorial is for you to customize and deploy an ERC20 contract on StarkNet. Your progress will be check by an [evaluator contract](contracts/Evaluator.cairo), deployed on StarkNet, which will grant you points in the form of [ERC20 tokens](contracts/token/ERC20/TUTOERC20.cairo).
 
-Each exercice will require you to add functionnality to your ERC20 token.
+Each exercise will require you to add functionality to your ERC20 token.
 
-For each exercice, you will have to write a new version on your contract, deploy it, and submit it to the evaluator for correction.
+For each exercise, you will have to write a new version on your contract, deploy it, and submit it to the evaluator for correction.
 
 ### Where am I?
 
@@ -145,7 +145,7 @@ For example to solve the first exercise the workflow would be the following:
 
 - The 'transfer' function of ERC20-101 has been disabled to encourage you to finish the tutorial with only one address
 - In order to receive points, you will have to reach the calls to the  `validate_and_distribute_points_once` function.
-- This repo contains two interfaces ([`IERC20Solution.cairo`](contracts/IERC20Solution.cairo) and [`IExerciceSolution.cairo`](contracts/IERC20Solution.cairo)). For example, for the first part, your ERC20 contract will have to conform to the first interface in order to validate the exercises; that is, your contract needs to implement all the functions described in `IERC20Solution.cairo`.
+- This repo contains two interfaces ([`IERC20Solution.cairo`](contracts/IERC20Solution.cairo) and [`IExerciseSolution.cairo`](contracts/IERC20Solution.cairo)). For example, for the first part, your ERC20 contract will have to conform to the first interface in order to validate the exercises; that is, your contract needs to implement all the functions described in `IERC20Solution.cairo`.
 - **We really recommend that your read the [`Evaluator.cairo`](contracts/Evaluator.cairo) contract in order to fully understand what's expected for each exercise**. A high level description of what is expected for each exercise is provided in this readme.
 - The Evaluator contract sometimes needs to make payments to buy your tokens. Make sure he has enough dummy tokens to do so! If not, you should get dummy tokens from the dummy tokens contract and send them to the evaluator.
 
