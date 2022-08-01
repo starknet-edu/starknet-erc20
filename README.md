@@ -153,9 +153,9 @@ For example to solve the first exercise the workflow would be the following:
 
 | Contract code                                                     | Contract on voyager                                                                                                                                                           |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo)     | [0x5c5f26603b22799e8126634d8fd185c75d0200ac1ce721bb406292054e80465](https://goerli.voyager.online/contract/0x5c5f26603b22799e8126634d8fd185c75d0200ac1ce721bb406292054e80465) |
-| [Evaluator](contracts/Evaluator.cairo)                            | [0x69fa64a23e76560edc7dfa94101734048ad7d15f54e86d677cf7b42e9568471](https://goerli.voyager.online/contract/0x69fa64a23e76560edc7dfa94101734048ad7d15f54e86d677cf7b42e9568471) |
-| [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x6cf7610c6209b72980c39196bb94b0d1c952dc1248be14cf149ed16a2c5864f](https://goerli.voyager.online/contract/0x6cf7610c6209b72980c39196bb94b0d1c952dc1248be14cf149ed16a2c5864f) |
+| [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo)     | [0x228c0e6db14052a66901df14a9e8493c0711fa571860d9c62b6952997aae58b](https://goerli.voyager.online/contract/0x228c0e6db14052a66901df14a9e8493c0711fa571860d9c62b6952997aae58b) |
+| [Evaluator](contracts/Evaluator.cairo)                            | [0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394](https://goerli.voyager.online/contract/0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394) |
+| [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96](https://goerli.voyager.online/contract/0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96) |
 
 ​
 ​
@@ -171,7 +171,7 @@ The tutorial is structured in two parts
 
 ### Exercise 1 - Deploy an ERC20
 
-- Call [`ex1_assign_rank()`](contracts/Evaluator.cairo#L134) in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply through the [evaluator page in voyager](https://goerli.voyager.online/contract/0x69fa64a23e76560edc7dfa94101734048ad7d15f54e86d677cf7b42e9568471) by calling getters [`read_ticker()`]((contracts/Evaluator.cairo#L93)) and [`read_supply()`](contracts/Evaluator.cairo#L102)
+- Call [`ex1_assign_rank()`](contracts/Evaluator.cairo#L134) in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply through the [evaluator page in voyager](https://goerli.voyager.online/contract/0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394) by calling getters [`read_ticker()`]((contracts/Evaluator.cairo#L93)) and [`read_supply()`](contracts/Evaluator.cairo#L102)
 - Create an ERC20 token contract with the proper ticker and supply. You can use [this implementation](https://github.com/OpenZeppelin/cairo-contracts/blob/main/src/openzeppelin/token/erc20/ERC20.cairo) as a base (2 pts)
 - Deploy it to the testnet (check the constructor for the needed arguments. Also note that the arguments should be decimals.) (1pt)
 
@@ -216,7 +216,7 @@ starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
 
 ### Exercise 10 - Claiming dummy tokens
 
-- Manually claim tokens on the predeployed claimable [ERC20](https://goerli.voyager.online/contract/0x6cf7610c6209b72980c39196bb94b0d1c952dc1248be14cf149ed16a2c5864f) ([DTK tokens](contracts/token/ERC20/DTKERC20.cairo)) (1 pts)
+- Manually claim tokens on the predeployed claimable [ERC20](https://goerli.voyager.online/contract/0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96) ([DTK tokens](contracts/token/ERC20/DTKERC20.cairo)) (1 pts)
 - Claim your points by calling [`ex10_claimed_tokens()`](contracts/Evaluator.cairo#L364) in the evaluator (1 pts)
 
 ### Exercise 11 - Calling the faucet from your contract
@@ -289,7 +289,7 @@ To open Python in interactive mode after running script
 Your points will get credited in your wallet; though this may take some time. If you want to monitor your points count in real time, you can also see your balance in voyager!
 ​
 
-- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/0x5c5f26603b22799e8126634d8fd185c75d0200ac1ce721bb406292054e80465#readContract)  in voyager, in the "read contract" tab
+- Go to the  [ERC20 counter](https://goerli.voyager.online/contract/0x228c0e6db14052a66901df14a9e8493c0711fa571860d9c62b6952997aae58b#readContract)  in voyager, in the "read contract" tab
 - Enter your address in decimal in the "balanceOf" function
 
 You can also check your overall progress [here](https://starknet-tutorials.vercel.app)
