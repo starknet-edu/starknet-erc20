@@ -144,7 +144,7 @@ For example to solve the first exercise the workflow would be the following:
 
 - The 'transfer' function of ERC20-101 has been disabled to encourage you to finish the tutorial with only one address
 - In order to receive points, you will have to reach the calls to the  `validate_and_distribute_points_once` function.
-- This repo contains two interfaces ([`IERC20Solution.cairo`](contracts/IERC20Solution.cairo) and [`IExerciseSolution.cairo`](contracts/IERC20Solution.cairo)). For example, for the first part, your ERC20 contract will have to conform to the first interface in order to validate the exercises; that is, your contract needs to implement all the functions described in `IERC20Solution.cairo`.
+- This repo contains two interfaces ([`IERC20Solution.cairo`](contracts/IERC20Solution.cairo) and [`IExerciseSolution.cairo`](contracts/IExerciceSolution.cairo)). For example, for the first part, your ERC20 contract will have to conform to the first interface in order to validate the exercises; that is, your contract needs to implement all the functions described in `IERC20Solution.cairo`.
 - **We really recommend that your read the [`Evaluator.cairo`](contracts/Evaluator.cairo) contract in order to fully understand what's expected for each exercise**. A high level description of what is expected for each exercise is provided in this readme.
 - The Evaluator contract sometimes needs to make payments to buy your tokens. Make sure he has enough dummy tokens to do so! If not, you should get dummy tokens from the dummy tokens contract and send them to the evaluator.
 
