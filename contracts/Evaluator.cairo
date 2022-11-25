@@ -39,6 +39,7 @@ from contracts.utils.ex00_base import (
     assign_rank_to_player,
     random_attributes_storage,
     max_rank_storage,
+    set_random_values,
 )
 
 from contracts.token.ERC20.ITUTOERC20 import ITUTOERC20
