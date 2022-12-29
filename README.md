@@ -121,9 +121,6 @@ docker run --rm -it -v ${pwd}:/work --workdir /work shardlabs/cairo-cli:latest
 starknet-compile contracts/Evaluator.cairo
 ```
 
-​
-​
-
 ## Working on the tutorial
 
 ### Workflow
@@ -148,7 +145,7 @@ For example to solve the first exercise the workflow would be the following:
 - **We really recommend that your read the [`Evaluator.cairo`](contracts/Evaluator.cairo) contract in order to fully understand what's expected for each exercise**. A high level description of what is expected for each exercise is provided in this readme.
 - The Evaluator contract sometimes needs to make payments to buy your tokens. Make sure he has enough dummy tokens to do so! If not, you should get dummy tokens from the dummy tokens contract and send them to the evaluator.
 
-### Contracts code and addresses
+### Contracts code and addresses on alpha-goerli Testnet
 
 | Contract code                                                     | Contract on voyager                                                                                                                                                           |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -156,7 +153,8 @@ For example to solve the first exercise the workflow would be the following:
 | [Evaluator](contracts/Evaluator.cairo)                            | [0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394](https://goerli.voyager.online/contract/0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394) |
 | [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96](https://goerli.voyager.online/contract/0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96) |
 
-​
+
+#### Addresses of the exercises and contracts on [alpha-goerli Testnet2]()
 ​
 
 ## Tasks list
@@ -176,7 +174,7 @@ The tutorial is structured in two parts
 
 ```bash
 starknet-compile contracts/token/ERC20/ERC20.cairo --output artifacts/ERC20.json
-starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli 
+starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
 ```
 
 - Call [`submit_erc20_solution()`](contracts/Evaluator.cairo#L733) in the Evaluator to set the contract you want evaluated (2pts) (Previous 3 points for the ERC20 and the deployment are also attributed at that step)
@@ -295,15 +293,8 @@ You can also check your overall progress [here](https://starknet-tutorials.verce
 ​
 
 ### Transaction status
-
-​
 You sent a transaction, and it is shown as "undetected" in voyager? This can mean two things:
-​
-
 - Your transaction is pending, and will be included in a block shortly. It will then be visible in voyager.
 - Your transaction was invalid, and will NOT be included in a block (there is no such thing as a failed transaction in StarkNet).
 ​
 You can (and should) check the status of your transaction with the following URL  [https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=](https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=)  , where you can append your transaction hash.
-​
-
-​
