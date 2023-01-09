@@ -181,8 +181,10 @@ The tutorial is structured in two parts
 - Deploy it to the testnet (check the constructor for the needed arguments. Also note that the arguments should be decimals.) (1pt)
 
 ```bash
-starknet-compile contracts/token/ERC20/ERC20.cairo --output artifacts/ERC20.json
-starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli
+protostar build
+protostar declare ./build/ERC20.json --account-address acct_addr --private-key-path ./.pkey --max-fee auto --network alpha-goerli
+protostar deploy class_hash --account-address acct_addr --private-key-path ./.pkey --max-fee auto -i arg1 arg2 arg3 --network alpha-goerli
+
 ```
 
 - Call [`submit_erc20_solution()`](contracts/Evaluator.cairo#L733) in the Evaluator to set the contract you want evaluated (2pts) (Previous 3 points for the ERC20 and the deployment are also attributed at that step)
