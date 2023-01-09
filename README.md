@@ -118,8 +118,10 @@ docker run --rm -it -v ${pwd}:/work --workdir /work shardlabs/cairo-cli:latest
 ### Step 3 -Test that you are able to compile the project
 
 ```bash
-starknet-compile contracts/Evaluator.cairo
+protostar build
 ```
+
+For more detailed deploy scripts please refer to `deploy folder`
 
 ## Working on the tutorial
 
@@ -154,7 +156,13 @@ For example to solve the first exercise the workflow would be the following:
 | [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96](https://goerli.voyager.online/contract/0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96) |
 
 
-#### Addresses of the exercises and contracts on [alpha-goerli Testnet2]()
+### Contracts code and addresses on alpha-goerli Testnet2
+
+| Contract code                                                     | Contract on Starkscan                                                                                                                                                           |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo)     | [0x01827f4e2de4f87e5b4d2ca416434ac4f9ecf189e6cf5787d60a574b845e4eff](https://goerli.voyager.online/contract/0x228c0e6db14052a66901df14a9e8493c0711fa571860d9c62b6952997aae58b) |
+| [Evaluator](contracts/Evaluator.cairo)                            | [0x0312cc82db6e8607cbf247ed48303767586b15faa080ccd57fb3d17e164a42c3](https://testnet-2.starkscan.co/contract/0x0312cc82db6e8607cbf247ed48303767586b15faa080ccd57fb3d17e164a42c3) |
+| [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x03d02997c5da298ffeb47c3d32761027471ffe151ff3c62027517ebd0a3b92fb](https://testnet-2.starkscan.co/contract/0x03d02997c5da298ffeb47c3d32761027471ffe151ff3c62027517ebd0a3b92fb) |​
 ​
 
 ## Tasks list
