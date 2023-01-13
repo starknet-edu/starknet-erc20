@@ -3,7 +3,6 @@ protostar-version = "0.9.0"
 lib-path = "lib"
 
 [contracts]
-UDC = ["contracts/UniversalDeployer.cairo"]
 players_registry = ["contracts/utils/players_registry.cairo"]
 TUTOERC20 = ["contracts/token/ERC20/TUTOERC20.cairo"]
 dummy_token = ["contracts/token/ERC20/DTKERC20.cairo"]
