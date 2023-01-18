@@ -170,7 +170,7 @@ The tutorial is structured in two parts
 
 ### Exercise 1 - Deploy an ERC20
 
-- Call [`ex1_assign_rank()`](contracts/Evaluator.cairo#L134) in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply through the [evaluator page in voyager](https://goerli.voyager.online/contract/0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394) by calling getters [`read_ticker()`]((contracts/Evaluator.cairo#L93)) and [`read_supply()`](contracts/Evaluator.cairo#L102)
+- Call [`ex1_assign_rank()`](contracts/Evaluator.cairo#L134) in the evaluator contract to receive a random ticker for your ERC20 token, as well as an initial token supply (1 pt). You can read your assigned ticker and supply through the [evaluator page in voyager](https://goerli.voyager.online/contract/0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394) by calling getters [`read_ticker()`](contracts/Evaluator.cairo#L93) and [`read_supply()`](contracts/Evaluator.cairo#L102)
 - Create an ERC20 token contract with the proper ticker and supply. You can use [this implementation](https://github.com/OpenZeppelin/cairo-contracts/blob/main/src/openzeppelin/token/erc20/ERC20.cairo) as a base (2 pts)
 - Deploy it to the testnet (check the constructor for the needed arguments. Also note that the arguments should be decimals.) (1pt)
 
