@@ -1,5 +1,5 @@
 [project]
-protostar-version = "0.9.0"
+protostar-version = "0.9.1"
 lib-path = "lib"
 
 [contracts]
@@ -7,7 +7,6 @@ players_registry = ["contracts/utils/players_registry.cairo"]
 TUTOERC20 = ["contracts/token/ERC20/TUTOERC20.cairo"]
 dummy_token = ["contracts/token/ERC20/DTKERC20.cairo"]
 Evaluator = ["contracts/Evaluator.cairo"]
-EX01 = ['contracts/exercise/ex01.cairo']
 
 [format]
 target = ["src", "tests"]
