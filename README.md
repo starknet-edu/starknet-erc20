@@ -129,7 +129,7 @@ export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAcco
 ```
 
 ### Step 5 - Create and deploy your account
-
+Before deploying your account, send a few Goerli ETH to it.
 ```bash
 starknet new_account
 starknet deploy_account
