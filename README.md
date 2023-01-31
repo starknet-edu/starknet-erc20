@@ -8,9 +8,6 @@ It is aimed at developers that:
 
 This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com/trevis_dev)) in collaboration with Henri Lieutaud and Lucas Levy, based on Henri's original [ERC20 101](https://github.com/l-henri/erc20-101) and [ERC20 102](https://github.com/l-henri/erc20-102) tutorials for Solidity.
 
-​
-​
-
 ## Introduction
 
 ### Disclaimer
@@ -77,7 +74,10 @@ protostar install OpenZeppelin/cairo-contracts@v0.5.1
 protostar build --cairo-path ./lib/cairo_contracts/src
 ```
 
-- For more detailed deploy scripts please refer to `deploy folder`
+- Deploy everything using one script `deploy_starknet.py` to your local starknet-devnt
+```
+  python3 deploy_starknet.py
+```
 
 ## Working on the tutorial
 
