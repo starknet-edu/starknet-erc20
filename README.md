@@ -65,7 +65,7 @@ This project can be made better and will evolve as StarkNet matures. Your contri
 - Clone the repo on your machine.
 - Set up the starknet environment following [these instructions](https://starknet.io/docs/quickstart.html#quickstart).
 - Set up your local starknet-devnet [official doc](https://shard-labs.github.io/starknet-devnet/)
-- Set up protostar build tool [official doc](https://docs.swmansion.com/protostar/)
+- Set up the Protostar smart contract development toolchain ([official doc](https://docs.swmansion.com/protostar/))
 - Or use the best practise to setup the local dev env [github](https://github.com/starknet-edu/setup-starknet-dev-env/)
 - Test that you can compile the project.
 
