@@ -5,7 +5,7 @@ from utils import str_to_felt, felt_to_str
 network = "devnet"
 account_addr = "0x33507ff2edf12c12c73d0b6d1d90de9fac12a355de1097ab305249612451919"
 salt = 1234
-tutoerc20_addr = "0x"
+tderc20_addr = "0x"
 player_registry_addr = "0x"
 dummytoken_addr = "0x"
 evaluator_addr = "0x"
@@ -49,7 +49,7 @@ def deploy_players_registry():
   return
 
 # Deploy TDERC20
-def deploy_tutoerc20(token_name_str, token_symbol_str):
+def deploy_tderc20(token_name_str, token_symbol_str):
   contract = "TUTOERC20"
   print("DECLARE " + contract)
   out = run_command(f"protostar -p {network} declare ./build/{contract}.json --account-address {account_addr} --private-key-path ./{pkey} --max-fee {max_fee} --json")
@@ -117,7 +117,7 @@ def print_all_contracts():
   print(f"Yo starknet fans, all contracts deployed successfully on {network}!")
   print("=================================================================================")
   print("tderc20_addr: ", tderc20_addr)
-  print("player_registry_addr: ", tderc20_addr)
+  print("player_registry_addr: ", player_registry_addr)
   print("dummytoken_addr: ", dummytoken_addr)
   print("evaluator_addr: ", evaluator_addr)
   print("=================================================================================")
@@ -128,7 +128,7 @@ def deploy_all():
   build('./lib/cairo_contracts/src')
   # test()
   deploy_players_registry()
-  deploy_tutoerc20("ERC20-101", "ERC20-101")
+  deploy_tderc20("ERC20-101", "ERC20-101")
   deploy_dummy_token("DummyToken-ERC20", "DTK20")
   deploy_evaluator()
   evaluator_set_random_values(100, [1146045253,1246123597,1095194946,1229539148,1146378315,1447972440,1380930885,1481919816,1514423620,1380865093,1447970121,1347639363,1313424714,1314149714,1314282072,1514358355,1481263182,1146178124,1213156683,1129270861,1514623319,1515081808,1331315536,1229672001,1111704643,1230651986,1380731732,1162824782,1296586325,1112163394,1498369876,1246844240,1481984340,1111641942,1196639555,1280789843,1196051542,1514494545,1297763154,1481919820,1313362001,1095586649,1431589459,1313754188,1096174913,1262765395,1196578885,1431062350,1245924184,1498497603,1263229530,1313559621,1096239194,1096112194,1380800078,1112688714,1163480154,1296519509,1465404249,1263224399,1380271447,1296191831,1279677518,1431785299,1180191310,1129989449,1297634636,1363957319,1380666188,1380996691,1346586457,1415136583,1363299162,1280070481,1246843724,1331123524,1380995159,1497846082,1263554369,1146504773,1162037337,1095453511,1447712589,1213091650,1229670221,1297238857,1431328854,1515017289,1230133831,1195526998,1346521154,1280464705,1431849558,1230262872,1095648083,1413761609,1162824514,1331057752,1262637655,1145130563], 0)

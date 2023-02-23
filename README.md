@@ -77,7 +77,7 @@ protostar build --cairo-path ./lib/cairo_contracts/src
 - Run `starknet-devnet -seed 1234` on your local machine
 - Make sure you create '.pkey' file and put your account private key into it
 - In `deploy_starknet.py` script, there is a `settings` section. You can customize it at your preferences, such as your account, your deployment network of choice etc.
-- Deploy everything using one script `deploy_starknet.py` to your local starknet-devnet
+- Deploy everything using one script `deploy_starknet.py` to your local `starknet-devnet`
 ```
   python3 deploy_starknet.py
 ```
