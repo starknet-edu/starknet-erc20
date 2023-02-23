@@ -8,9 +8,6 @@ It is aimed at developers that:
 
 This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com/trevis_dev)) in collaboration with Henri Lieutaud and Lucas Levy, based on Henri's original [ERC20 101](https://github.com/l-henri/erc20-101) and [ERC20 102](https://github.com/l-henri/erc20-102) tutorials for Solidity.
 
-​
-​
-
 ## Introduction
 
 ### Disclaimer
@@ -64,65 +61,26 @@ This project can be made better and will evolve as StarkNet matures. Your contri
 - Add an explanation in the comments of the exercise if you feel it needs more explanation
 - Add exercises showcasing your favorite Cairo feature
 
-​
+## Get ready to work
+- Clone the repo on your machine.
+- Set up the starknet environment following [these instructions](https://starknet.io/docs/quickstart.html#quickstart).
+- Set up your local starknet-devnet (similar to Ganache in Ethereum L1) ([official doc](https://shard-labs.github.io/starknet-devnet/))
+- Set up the Protostar smart contract development toolchain ([official doc](https://docs.swmansion.com/protostar/))
+- Or use the best practise to setup the local dev env [github](https://github.com/starknet-edu/setup-starknet-dev-env/)
+- Test that you can compile the project.
 
-## Getting ready to work
-
-### Step 1 - Clone the repo
-
-```bash
-git clone https://github.com/starknet-edu/starknet-erc20
-cd starknet-erc20
+```
+protostar install OpenZeppelin/cairo-contracts@v0.5.1
+protostar build --cairo-path ./lib/cairo_contracts/src
 ```
 
-### Step 2 - Set up your environment
-
-There are two ways to set up your environment on StarkNet: a local installation, or using a docker container
-
-- For Mac and Linux users, we recommend either
-- For windows users we recommand docker
-
-For a production setup instructions we wrote [this article](https://medium.com/starknet-edu/the-ultimate-starknet-dev-environment-716724aef4a7).
-
-#### Option A - Set up a local python environment
-
-- Set up the environment following [these instructions](https://starknet.io/docs/quickstart.html#quickstart)
-- Install [OpenZeppelin's cairo contracts](https://github.com/OpenZeppelin/cairo-contracts).
-
-```bash
-pip install openzeppelin-cairo-contracts
+- Run `starknet-devnet -seed 1234` on your local machine
+- Make sure you create '.pkey' file and put your account private key into it
+- In `deploy_starknet.py` script, there is a `settings` section. You can customize it at your preferences, such as your account, your deployment network of choice etc.
+- Deploy everything using one script `deploy_starknet.py` to your local `starknet-devnet`
 ```
-
-#### Option B - Use a dockerized environment
-
-- Linux and macos
-
-for mac m1:
-
-```bash
-alias cairo='docker run --rm -v "$PWD":"$PWD" -w "$PWD" shardlabs/cairo-cli:latest-arm'
+  python3 deploy_starknet.py
 ```
-
-for amd processors
-
-```bash
-alias cairo='docker run --rm -v "$PWD":"$PWD" -w "$PWD" shardlabs/cairo-cli:latest'
-```
-
-- Windows
-
-```bash
-docker run --rm -it -v ${pwd}:/work --workdir /work shardlabs/cairo-cli:latest
-```
-
-### Step 3 -Test that you are able to compile the project
-
-```bash
-starknet-compile contracts/Evaluator.cairo
-```
-
-​
-​
 
 ## Working on the tutorial
 
@@ -148,7 +106,7 @@ For example to solve the first exercise the workflow would be the following:
 - **We really recommend that your read the [`Evaluator.cairo`](contracts/Evaluator.cairo) contract in order to fully understand what's expected for each exercise**. A high level description of what is expected for each exercise is provided in this readme.
 - The Evaluator contract sometimes needs to make payments to buy your tokens. Make sure he has enough dummy tokens to do so! If not, you should get dummy tokens from the dummy tokens contract and send them to the evaluator.
 
-### Contracts code and addresses
+### Contracts code and addresses on alpha-goerli Testnet
 
 | Contract code                                                     | Contract on voyager                                                                                                                                                           |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -156,7 +114,14 @@ For example to solve the first exercise the workflow would be the following:
 | [Evaluator](contracts/Evaluator.cairo)                            | [0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394](https://goerli.voyager.online/contract/0x14ece8a1dcdcc5a56f01a987046f2bd8ddfb56bc358da050864ae6da5f71394) |
 | [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96](https://goerli.voyager.online/contract/0x66aa72ce2916bbfc654fd18f9c9aaed29a4a678274639a010468a948a5e2a96) |
 
-​
+
+### Contracts code and addresses on alpha-goerli Testnet2
+
+| Contract code                                                     | Contract on Starkscan                                                                                                                                                           |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Points counter ERC20](contracts/token/ERC20/TUTOERC20.cairo)     | [0x01827f4e2de4f87e5b4d2ca416434ac4f9ecf189e6cf5787d60a574b845e4eff](https://goerli.voyager.online/contract/0x228c0e6db14052a66901df14a9e8493c0711fa571860d9c62b6952997aae58b) |
+| [Evaluator](contracts/Evaluator.cairo)                            | [0x0312cc82db6e8607cbf247ed48303767586b15faa080ccd57fb3d17e164a42c3](https://testnet-2.starkscan.co/contract/0x0312cc82db6e8607cbf247ed48303767586b15faa080ccd57fb3d17e164a42c3) |
+| [Dummy ERC20 token (DTK20)](contracts/token/ERC20/DTKERC20.cairo) | [0x03d02997c5da298ffeb47c3d32761027471ffe151ff3c62027517ebd0a3b92fb](https://testnet-2.starkscan.co/contract/0x03d02997c5da298ffeb47c3d32761027471ffe151ff3c62027517ebd0a3b92fb) |​
 ​
 
 ## Tasks list
@@ -175,8 +140,10 @@ The tutorial is structured in two parts
 - Deploy it to the testnet (check the constructor for the needed arguments. Also note that the arguments should be decimals.) (1pt)
 
 ```bash
-starknet-compile contracts/token/ERC20/ERC20.cairo --output artifacts/ERC20.json
-starknet deploy --contract ERC20 --inputs arg1 arg2 arg3 --network alpha-goerli 
+protostar build
+protostar declare ./build/ERC20.json --account-address acct_addr --private-key-path ./.pkey --max-fee auto --network alpha-goerli
+protostar deploy class_hash --account-address acct_addr --private-key-path ./.pkey --max-fee auto -i arg1 arg2 arg3 --network alpha-goerli
+
 ```
 
 - Call [`submit_erc20_solution()`](contracts/Evaluator.cairo#L733) in the Evaluator to set the contract you want evaluated (2pts) (Previous 3 points for the ERC20 and the deployment are also attributed at that step)
@@ -295,15 +262,8 @@ You can also check your overall progress [here](https://starknet-tutorials.verce
 ​
 
 ### Transaction status
-
-​
 You sent a transaction, and it is shown as "undetected" in voyager? This can mean two things:
-​
-
 - Your transaction is pending, and will be included in a block shortly. It will then be visible in voyager.
 - Your transaction was invalid, and will NOT be included in a block (there is no such thing as a failed transaction in StarkNet).
 ​
 You can (and should) check the status of your transaction with the following URL  [https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=](https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=)  , where you can append your transaction hash.
-​
-
-​

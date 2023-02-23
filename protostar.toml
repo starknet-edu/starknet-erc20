@@ -1,0 +1,35 @@
+[project]
+protostar-version = "0.9.1"
+lib-path = "lib"
+
+[contracts]
+players_registry = ["contracts/utils/players_registry.cairo"]
+TUTOERC20 = ["contracts/token/ERC20/TUTOERC20.cairo"]
+dummy_token = ["contracts/token/ERC20/DTKERC20.cairo"]
+Evaluator = ["contracts/Evaluator.cairo"]
+
+[format]
+target = ["src", "tests"]
+ignore-broken = true
+
+[profile.devnet.project]
+gateway-url = "http://127.0.0.1:5050/"
+chain-id = 1536727068981429685321
+
+[profile.testnet.project]
+network="testnet"
+
+[profile.testnet2.project]
+network="testnet2"
+
+["profile.devnet.protostar.deploy"]
+gateway-url="http://127.0.0.1:5050/"
+
+["profile.testnet.protostar.deploy"]
+network="testnet"
+
+["profile.testnet2.protostar.deploy"]
+network="testnet2"
+
+["profile.mainnet.protostar.deploy"]
+network="mainnet"
