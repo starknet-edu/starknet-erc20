@@ -61,7 +61,7 @@ This project can be made better and will evolve as StarkNet matures. Your contri
 - Add an explanation in the comments of the exercise if you feel it needs more explanation
 - Add exercises showcasing your favorite Cairo feature
 
-## Reusing this project
+## Get ready to work
 - Clone the repo on your machine.
 - Set up the starknet environment following [these instructions](https://starknet.io/docs/quickstart.html#quickstart).
 - Set up your local starknet-devnet (similar to Ganache in Ethereum L1) ([official doc](https://shard-labs.github.io/starknet-devnet/))
@@ -74,7 +74,10 @@ protostar install OpenZeppelin/cairo-contracts@v0.5.1
 protostar build --cairo-path ./lib/cairo_contracts/src
 ```
 
-- Deploy everything using one script `deploy_starknet.py` to your local starknet-devnt
+- Run `starknet-devnet -seed 1234` on your local machine
+- Make sure you create '.pkey' file and put your account private key into it
+- In `deploy_starknet.py` script, there is a `settings` section. You can customize it at your preferences, such as your account, your deployment network of choice etc.
+- Deploy everything using one script `deploy_starknet.py` to your local starknet-devnet
 ```
   python3 deploy_starknet.py
 ```
