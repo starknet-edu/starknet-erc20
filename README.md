@@ -121,8 +121,19 @@ docker run --rm -it -v ${pwd}:/work --workdir /work shardlabs/cairo-cli:latest
 starknet-compile contracts/Evaluator.cairo
 ```
 
-​
-​
+### Step 4 - Define your environment variables to set up your account
+
+```bash
+export STARKNET_NETWORK=alpha-goerli
+export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
+```
+
+### Step 5 - Create and deploy your account
+Before deploying your account, send a few Goerli ETH to it.
+```bash
+starknet new_account
+starknet deploy_account
+```
 
 ## Working on the tutorial
 
@@ -139,6 +150,20 @@ To do this tutorial you will have to interact with the [`Evaluator.cairo`](contr
 For example to solve the first exercise the workflow would be the following:
 
 `deploy a smart contract that answers ex1` &rarr; `call submit_exercise on the evaluator providing your smart contract address` &rarr; `call ex2_test_erc20 on the evaluator contract`
+
+Notes:
+To deploy a smart contract, follow these instructions:
+
+```bash
+starknet-compile my_contrats/erc20.cairo --output artifacts/erc20.json
+starknet declare --contract artifacts/erc20.json
+```
+
+Use the contract class from the output of the previous command
+
+```bash
+starknet deploy --class_hash <compile_contract_class_hash> --network alpha-goerli
+```
 
 ***Your objective is to gather as many ERC20-101 points as possible.*** Please note :
 
