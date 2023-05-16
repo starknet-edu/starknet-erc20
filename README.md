@@ -1,6 +1,6 @@
-# ERC20 on StarkNet
+# ERC20 on Starknet
 
-Welcome! This is an automated workshop that will explain how to deploy an ERC20 token on StarkNet and customize it to perform specific functions. The ERC20 standard is described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20)
+Welcome! This is an automated workshop that will explain how to deploy an ERC20 token on Starknet and customize it to perform specific functions. The ERC20 standard is described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20)
 It is aimed at developers that:
 
 - Understand Cairo syntax
@@ -15,14 +15,14 @@ This tutorial was written by Florian Charlier ([@trevis_dev](https://twitter.com
 
 ### Disclaimer
 
-Don't expect any kind of benefit from using this, other than learning a bunch of cool stuff about StarkNet, the first general purpose validity rollup on the Ethereum Mainnnet.
+Don't expect any kind of benefit from using this, other than learning a bunch of cool stuff about Starknet, the first general purpose validity rollup on the Ethereum Mainnnet.
 ​
-StarkNet is still in Alpha. This means that development is ongoing, and the paint is not dry everywhere. Things will get better, and in the meanwhile, we make things work with a bit of duct tape here and there!
+Starknet is still in Alpha. This means that development is ongoing, and the paint is not dry everywhere. Things will get better, and in the meanwhile, we make things work with a bit of duct tape here and there!
 ​
 
 ### How it works
 
-The goal of this tutorial is for you to customize and deploy an ERC20 contract on StarkNet. Your progress will be check by an [evaluator contract](contracts/Evaluator.cairo), deployed on StarkNet, which will grant you points in the form of [ERC20 tokens](contracts/token/ERC20/TUTOERC20.cairo).
+The goal of this tutorial is for you to customize and deploy an ERC20 contract on Starknet. Your progress will be check by an [evaluator contract](contracts/Evaluator.cairo), deployed on Starknet, which will grant you points in the form of [ERC20 tokens](contracts/token/ERC20/TUTOERC20.cairo).
 
 Each exercise will require you to add functionality to your ERC20 token.
 
@@ -30,16 +30,16 @@ For each exercise, you will have to write a new version on your contract, deploy
 
 ### Where am I?
 
-This workshop is the third in a series aimed at teaching how to build on StarkNet. Checkout out the following:
+This workshop is the third in a series aimed at teaching how to build on Starknet. Checkout out the following:
 
 | Topic                                              | GitHub repo                                                                            |
 | -------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Learn how to read Cairo code                       | [Cairo 101](https://github.com/starknet-edu/starknet-cairo-101)                        |
-| Deploy and customize an ERC721 NFT                 | [StarkNet ERC721](https://github.com/starknet-edu/starknet-erc721)                     |
-| Deploy and customize an ERC20 token (you are here) | [StarkNet ERC20](https://github.com/starknet-edu/starknet-erc20)                       |
-| Build a cross layer application                    | [StarkNet messaging bridge](https://github.com/starknet-edu/starknet-messaging-bridge) |
-| Debug your Cairo contracts easily                  | [StarkNet debug](https://github.com/starknet-edu/starknet-debug)                       |
-| Design your own account contract                   | [StarkNet account abstraction](https://github.com/starknet-edu/starknet-accounts)      |
+| Deploy and customize an ERC721 NFT                 | [Starknet ERC721](https://github.com/starknet-edu/starknet-erc721)                     |
+| Deploy and customize an ERC20 token (you are here) | [Starknet ERC20](https://github.com/starknet-edu/starknet-erc20)                       |
+| Build a cross layer application                    | [Starknet messaging bridge](https://github.com/starknet-edu/starknet-messaging-bridge) |
+| Debug your Cairo contracts easily                  | [Starknet debug](https://github.com/starknet-edu/starknet-debug)                       |
+| Design your own account contract                   | [Starknet account abstraction](https://github.com/starknet-edu/starknet-accounts)      |
 
 ### Providing feedback & getting help
 
@@ -53,11 +53,11 @@ And if you struggle to move forward, do let us know! This workshop is meant to b
 ​
 Do you have a question? Join our [Discord server](https://starknet.io/discord), register, and join channel #tutorials-support
 ​
-Are you interested in following online workshops about learning how to dev on StarkNet? [Subscribe here](http://eepurl.com/hFnpQ5)
+Are you interested in following online workshops about learning how to dev on Starknet? [Subscribe here](http://eepurl.com/hFnpQ5)
 
 ### Contributing
 
-This project can be made better and will evolve as StarkNet matures. Your contributions are welcome! Here are things that you can do to help:
+This project can be made better and will evolve as Starknet matures. Your contributions are welcome! Here are things that you can do to help:
 
 - Create a branch with a translation to your language
 - Correct bugs if you find some
@@ -77,7 +77,7 @@ cd starknet-erc20
 
 ### Step 2 - Set up your environment
 
-There are two ways to set up your environment on StarkNet: a local installation, or using a docker container
+There are two ways to set up your environment on Starknet: a local installation, or using a docker container
 
 - For Mac and Linux users, we recommend either
 - For windows users we recommand docker
@@ -143,7 +143,7 @@ To do this tutorial you will have to interact with the [`Evaluator.cairo`](contr
 
 - Read the evaluator code to figure out what is expected of your contract
 - Customize your contract's code
-- Deploy it to StarkNet's testnet. This is done using the CLI.
+- Deploy it to Starknet's testnet. This is done using the CLI.
 - Register your exercise for correction, using the `submit_exercise` function on the evaluator. This is done using Voyager.
 - Call the relevant function on the evaluator contract to get your exercise corrected and receive your points. This is done using Voyager.
 
@@ -186,7 +186,7 @@ starknet deploy --class_hash <compile_contract_class_hash> --network alpha-goerl
 
 ## Tasks list
 
-Today you will deploy your own ERC20 token on StarkNet!
+Today you will deploy your own ERC20 token on Starknet!
 
 The tutorial is structured in two parts
 
@@ -326,7 +326,7 @@ You sent a transaction, and it is shown as "undetected" in voyager? This can mea
 ​
 
 - Your transaction is pending, and will be included in a block shortly. It will then be visible in voyager.
-- Your transaction was invalid, and will NOT be included in a block (there is no such thing as a failed transaction in StarkNet).
+- Your transaction was invalid, and will NOT be included in a block (there is no such thing as a failed transaction in Starknet).
 ​
 You can (and should) check the status of your transaction with the following URL  [https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=](https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=)  , where you can append your transaction hash.
 ​
